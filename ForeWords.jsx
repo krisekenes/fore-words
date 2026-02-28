@@ -1,14 +1,17 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { COURSES, generateHoles } from "./data/courses.js";
 import { checkWord, pickWord, evaluateGuess, getScoreName, HANDICAP_BONUS } from "./gameLogic.js";
+import { loadProfile, saveHandicap, saveRound } from "./storage.js";
 import MenuScreen from "./screens/MenuScreen.jsx";
 import CourseSelect from "./screens/CourseSelect.jsx";
 import PlayingScreen from "./screens/PlayingScreen.jsx";
 import RoundEnd from "./screens/RoundEnd.jsx";
+import ProfileScreen from "./screens/ProfileScreen.jsx";
 
 export default function ForeWords() {
+  const [profile, setProfile] = useState(() => loadProfile());
   const [screen, setScreen] = useState("menu");
-  const [handicap, setHandicap] = useState(10);
+  const [handicap, setHandicap] = useState(profile.handicap);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [currentHole, setCurrentHole] = useState(0);
   const [holes, setHoles] = useState([]);
@@ -29,6 +32,11 @@ export default function ForeWords() {
 
   const course = selectedCourse ? COURSES[selectedCourse] : null;
   const hole = holes[currentHole] || null;
+
+  const updateHandicap = (value) => {
+    setHandicap(value);
+    saveHandicap(value);
+  };
 
   const startCourse = (courseName) => {
     const generated = generateHoles(courseName);
@@ -173,6 +181,8 @@ export default function ForeWords() {
       setCurrentHole(nextHole);
       startHole(holes[nextHole]);
     } else {
+      saveRound({ course: selectedCourse, scores: newScores, holes });
+      setProfile(loadProfile());
       setScreen("roundEnd");
     }
   };
@@ -181,8 +191,18 @@ export default function ForeWords() {
     return (
       <MenuScreen
         handicap={handicap}
-        setHandicap={setHandicap}
+        setHandicap={updateHandicap}
         onSelectCourse={() => setScreen("courseSelect")}
+        onProfile={() => setScreen("profile")}
+      />
+    );
+  }
+
+  if (screen === "profile") {
+    return (
+      <ProfileScreen
+        profile={profile}
+        onBack={() => setScreen("menu")}
       />
     );
   }
