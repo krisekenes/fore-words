@@ -1,10 +1,11 @@
 // Course profiles and hole generation for replayability.
 // Each course defines a difficulty distribution; holes are randomized each session.
 
-// Par assignment by word length — scales linearly (wordLength - 1)
-// Longer words have larger search spaces and need more guesses to be fair
+// Par assignment by word length — non-linear to reflect that shorter words
+// give less information per guess, making them proportionally harder.
+// 4 and 5 letter words share par 4; longer words scale from there.
 const PAR_BY_LENGTH = {
-  4: 3,
+  4: 4,
   5: 4,
   6: 5,
   7: 6,
