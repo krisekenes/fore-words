@@ -1,12 +1,13 @@
 // Course profiles and hole generation for replayability.
 // Each course defines a difficulty distribution; holes are randomized each session.
 
-// Par assignment by word length
+// Par assignment by word length — scales linearly (wordLength - 1)
+// Longer words have larger search spaces and need more guesses to be fair
 const PAR_BY_LENGTH = {
   4: [3],
-  5: [3, 4],
-  6: [4, 5],
-  7: [5],
+  5: [4],
+  6: [5],
+  7: [6],
 };
 
 // Themed hole name pools per course
