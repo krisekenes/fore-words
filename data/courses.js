@@ -30,6 +30,18 @@ const HOLE_NAMES = {
     "Sandstorm", "The Wastes", "Scorched", "Oasis", "Camel's Back",
     "Sun Dial", "Dust Devil", "The Gauntlet", "Throne Room", "Final Stand",
   ],
+  "Morning Tee": [
+    "First Light", "Dewy Green", "Sunrise", "The Warm-Up", "Easy Does It",
+    "Coffee Cup", "Fresh Start", "Dawn Patrol", "Early Bird", "Day Break",
+  ],
+  "Midday Sprint": [
+    "High Noon", "Fast Track", "The Shortcut", "Double Time", "Quick Draw",
+    "Sun Shot", "Half Pace", "The Express", "Dash Point", "Speed Trap",
+  ],
+  "Sunset Dash": [
+    "Last Light", "Golden Hour", "The Closer", "Dusk Drive", "Twilight",
+    "Long Shadow", "Afterglow", "The Finisher", "Night Fall", "Final Putt",
+  ],
 };
 
 function shuffle(arr) {
@@ -43,9 +55,12 @@ function shuffle(arr) {
 
 // Word length distributions per course (pool of 9 to draw from each session)
 const LENGTH_POOLS = {
-  "The Links":    [4, 4, 4, 5, 5, 5, 6, 6, 7],
-  "Pine Valley":  [5, 5, 5, 6, 6, 6, 6, 7, 7],
-  "Royal Dunes":  [5, 6, 6, 6, 7, 7, 7, 7, 7],
+  "The Links":      [4, 4, 4, 5, 5, 5, 6, 6, 7],
+  "Pine Valley":    [5, 5, 5, 6, 6, 6, 6, 7, 7],
+  "Royal Dunes":    [5, 6, 6, 6, 7, 7, 7, 7, 7],
+  "Morning Tee":    [4, 4, 4, 5, 5, 5, 6, 6, 7],
+  "Midday Sprint":  [5, 5, 5, 6, 6, 6, 6, 7, 7],
+  "Sunset Dash":    [5, 6, 6, 6, 7, 7, 7, 7, 7],
 };
 
 // Total par for a course (deterministic, for display on cards)
@@ -87,5 +102,20 @@ export const COURSES = {
   "Royal Dunes": {
     description: "An elite links course — only the brave survive",
     color: "#3d2d1a",
+  },
+};
+
+export const QUICK_COURSES = {
+  "Morning Tee": {
+    description: "A gentle warm-up to start the day",
+    color: "#3d4a2d",
+  },
+  "Midday Sprint": {
+    description: "A brisk challenge for your lunch break",
+    color: "#2d3a4a",
+  },
+  "Sunset Dash": {
+    description: "A tough sprint before the sun goes down",
+    color: "#4a2d3a",
   },
 };
