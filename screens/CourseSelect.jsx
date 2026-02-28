@@ -2,25 +2,20 @@ import { COURSES, getCoursePar, getCourseLengths } from "../data/courses.js";
 import { THEMES } from "../data/themes.js";
 import { styles } from "../styles.js";
 import { globalStyles } from "../styles.js";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 
-const MODES = {
-  quick: { label: "QUICK PLAY", holes: 3 },
-  full: { label: "FULL ROUND", holes: 9 },
-};
+const MODES = [
+  { key: "quick", label: "QUICK PLAY", holes: 3 },
+  { key: "full", label: "FULL ROUND", holes: 9 },
+  { key: "themed", label: "THEMED", holes: 9 },
+];
 
 export default function CourseSelect({ onBack, onStartCourse }) {
   const [mode, setMode] = useState("full");
-  const [theme, setTheme] = useState("classic");
-  const holeCount = MODES[mode].holes;
-  const scrollRef = useRef(null);
-
-  // Auto-scroll selected theme into view
-  useEffect(() => {
-    if (!scrollRef.current) return;
-    const selected = scrollRef.current.querySelector('[data-selected="true"]');
-    if (selected) selected.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-  }, [theme]);
+  const [theme, setTheme] = useState("sports");
+  const modeInfo = MODES.find(m => m.key === mode);
+  const holeCount = modeInfo.holes;
+  const activeTheme = mode === "themed" ? theme : "classic";
 
   return (
     <div style={styles.container}>
@@ -33,22 +28,22 @@ export default function CourseSelect({ onBack, onStartCourse }) {
         <div style={{ width: "40px", height: "2px", background: "#c9a94e", margin: "0 auto 24px" }} />
 
         {/* Mode Toggle */}
-        <div style={{ display: "flex", justifyContent: "center", gap: "4px", marginBottom: "16px", background: "rgba(255,255,255,0.05)", borderRadius: "8px", padding: "4px" }}>
-          {Object.entries(MODES).map(([key, m]) => (
+        <div style={{ display: "flex", justifyContent: "center", gap: "4px", marginBottom: mode === "themed" ? "16px" : "24px", background: "rgba(255,255,255,0.05)", borderRadius: "8px", padding: "4px" }}>
+          {MODES.map((m) => (
             <button
-              key={key}
-              onClick={() => setMode(key)}
+              key={m.key}
+              onClick={() => setMode(m.key)}
               style={{
                 flex: 1,
-                padding: "10px 16px",
+                padding: "10px 12px",
                 borderRadius: "6px",
                 border: "none",
-                background: mode === key ? "linear-gradient(135deg, #4a7c59, #3a6a49)" : "transparent",
-                color: mode === key ? "#E8E0D0" : "#6a7a6e",
+                background: mode === m.key ? "linear-gradient(135deg, #4a7c59, #3a6a49)" : "transparent",
+                color: mode === m.key ? "#E8E0D0" : "#6a7a6e",
                 fontFamily: "'DM Sans', sans-serif",
-                fontSize: "12px",
+                fontSize: "11px",
                 fontWeight: 600,
-                letterSpacing: "2px",
+                letterSpacing: "1.5px",
                 cursor: "pointer",
                 transition: "all 0.2s ease",
               }}
@@ -61,47 +56,49 @@ export default function CourseSelect({ onBack, onStartCourse }) {
           ))}
         </div>
 
-        {/* Theme Selector */}
-        <div style={{ marginBottom: "20px" }}>
-          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "#6a7a6e", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: "8px", textAlign: "center" }}>
-            Word Theme
+        {/* Theme Selector — only shown in themed mode */}
+        {mode === "themed" && (
+          <div style={{ marginBottom: "20px" }}>
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "8px",
+            }}>
+              {THEMES.map((t) => (
+                <button
+                  key={t.key}
+                  onClick={() => setTheme(t.key)}
+                  style={{
+                    padding: "10px 12px",
+                    borderRadius: "8px",
+                    border: theme === t.key ? "1px solid rgba(74,124,89,0.6)" : "1px solid rgba(255,255,255,0.08)",
+                    background: theme === t.key ? "linear-gradient(135deg, #4a7c59, #3a6a49)" : "rgba(255,255,255,0.04)",
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                    textAlign: "left",
+                  }}
+                >
+                  <div style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "13px",
+                    fontWeight: theme === t.key ? 600 : 500,
+                    color: theme === t.key ? "#E8E0D0" : "#8BA89A",
+                  }}>
+                    {t.label}
+                  </div>
+                  <div style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "10px",
+                    color: theme === t.key ? "rgba(232,224,208,0.6)" : "#6a7a6e",
+                    marginTop: "2px",
+                  }}>
+                    {t.description}
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
-          <div
-            ref={scrollRef}
-            style={{
-              display: "flex",
-              gap: "6px",
-              overflowX: "auto",
-              paddingBottom: "4px",
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-            }}
-          >
-            {THEMES.map((t) => (
-              <button
-                key={t.key}
-                data-selected={theme === t.key ? "true" : "false"}
-                onClick={() => setTheme(t.key)}
-                style={{
-                  flexShrink: 0,
-                  padding: "6px 12px",
-                  borderRadius: "16px",
-                  border: theme === t.key ? "1px solid rgba(74,124,89,0.6)" : "1px solid rgba(255,255,255,0.08)",
-                  background: theme === t.key ? "linear-gradient(135deg, #4a7c59, #3a6a49)" : "rgba(255,255,255,0.04)",
-                  color: theme === t.key ? "#E8E0D0" : "#8BA89A",
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: "12px",
-                  fontWeight: theme === t.key ? 600 : 400,
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {t.emoji} {t.label}
-              </button>
-            ))}
-          </div>
-        </div>
+        )}
 
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           {Object.entries(COURSES).map(([name, c]) => {
@@ -110,7 +107,7 @@ export default function CourseSelect({ onBack, onStartCourse }) {
             return (
               <button
                 key={name}
-                onClick={() => onStartCourse(name, holeCount, theme)}
+                onClick={() => onStartCourse(name, holeCount, activeTheme)}
                 style={{
                   background: `linear-gradient(135deg, ${c.color}cc, ${c.color}88)`,
                   border: "1px solid rgba(255,255,255,0.08)",

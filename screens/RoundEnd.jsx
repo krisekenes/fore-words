@@ -21,7 +21,7 @@ export default function RoundEnd({ holes, scores, selectedCourse, selectedTheme,
           {diffStr}
         </div>
         <div style={{ textAlign: "center", color: "#8BA89A", fontFamily: "'DM Sans', sans-serif", fontSize: "14px", marginBottom: "24px" }}>
-          {total} strokes · Par {totalPar} · {selectedCourse}{themeInfo && themeInfo.key !== "classic" ? ` · ${themeInfo.emoji} ${themeInfo.label}` : ""}
+          {total} strokes · Par {totalPar} · {selectedCourse}{themeInfo ? ` · ${themeInfo.label}` : ""}
         </div>
 
         {/* Scorecard */}
