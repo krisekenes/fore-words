@@ -252,6 +252,7 @@ export default function ForeWords() {
         toastMessage={toastMessage}
         onKey={handleKey}
         onAdvanceHole={advanceHole}
+        onQuit={() => { setScreen("menu"); setSelectedCourse(null); }}
       />
     );
   }

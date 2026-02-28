@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { KEYBOARD_ROWS, TILE_COLORS } from "../constants.js";
 import { getScoreName } from "../gameLogic.js";
 import { styles } from "../styles.js";
@@ -22,7 +23,9 @@ export default function PlayingScreen({
   toastMessage,
   onKey,
   onAdvanceHole,
+  onQuit,
 }) {
+  const [showQuitConfirm, setShowQuitConfirm] = useState(false);
   const miniScoreTotal = scores.reduce((s, v) => s + v, 0);
   const miniParTotal = holes.slice(0, currentHole).reduce((s, h) => s + h.par, 0);
   const miniDiff = miniScoreTotal - miniParTotal;
@@ -164,12 +167,20 @@ export default function PlayingScreen({
 
       {/* Header */}
       <div style={{ padding: "12px 16px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div>
-          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", letterSpacing: "2px", color: "#6a7a6e" }}>
-            {selectedCourse?.toUpperCase()}
-          </div>
-          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "18px", color: "#E8E0D0" }}>
-            Hole {hole.num} <span style={{ color: "#8BA89A", fontSize: "14px", fontWeight: 400 }}>· {hole.name}</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <button
+            onClick={() => setShowQuitConfirm(true)}
+            style={{ background: "none", border: "none", color: "#6a7a6e", fontSize: "18px", cursor: "pointer", padding: "4px", lineHeight: 1 }}
+          >
+            ✕
+          </button>
+          <div>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", letterSpacing: "2px", color: "#6a7a6e" }}>
+              {selectedCourse?.toUpperCase()}
+            </div>
+            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "18px", color: "#E8E0D0" }}>
+              Hole {hole.num} <span style={{ color: "#8BA89A", fontSize: "14px", fontWeight: 400 }}>· {hole.name}</span>
+            </div>
           </div>
         </div>
         <div style={{ textAlign: "right" }}>
@@ -287,6 +298,50 @@ export default function PlayingScreen({
           );
         })}
       </div>
+
+      {/* Quit Confirmation */}
+      {showQuitConfirm && (
+        <div style={{
+          position: "absolute",
+          inset: 0,
+          background: "rgba(0,0,0,0.7)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 300,
+          backdropFilter: "blur(4px)",
+        }}>
+          <div style={{
+            background: "#1a1f1a",
+            border: "1px solid rgba(255,255,255,0.1)",
+            borderRadius: "16px",
+            padding: "28px 32px",
+            textAlign: "center",
+            maxWidth: "300px",
+          }}>
+            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "20px", color: "#E8E0D0", marginBottom: "8px", fontWeight: 600 }}>
+              Quit Round?
+            </div>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "#8BA89A", marginBottom: "24px", lineHeight: 1.5 }}>
+              Your progress on this round will be lost.
+            </div>
+            <div style={{ display: "flex", gap: "12px" }}>
+              <button
+                onClick={() => setShowQuitConfirm(false)}
+                style={{ ...styles.primaryBtn, flex: 1, background: "rgba(255,255,255,0.08)", fontSize: "13px", padding: "10px" }}
+              >
+                KEEP PLAYING
+              </button>
+              <button
+                onClick={onQuit}
+                style={{ ...styles.primaryBtn, flex: 1, background: "linear-gradient(135deg, #8B3A3A, #6B2A2A)", fontSize: "13px", padding: "10px" }}
+              >
+                QUIT
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
