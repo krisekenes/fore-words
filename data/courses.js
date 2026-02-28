@@ -49,9 +49,13 @@ const LENGTH_POOLS = {
 };
 
 // Total par for a course (deterministic, for display on cards)
-export function getCoursePar(courseName) {
+export function getCoursePar(courseName, holeCount = 9) {
   const lengths = LENGTH_POOLS[courseName];
-  return lengths.reduce((s, l) => s + PAR_BY_LENGTH[l], 0);
+  if (holeCount >= lengths.length) {
+    return lengths.reduce((s, l) => s + PAR_BY_LENGTH[l], 0);
+  }
+  const avgParPerHole = lengths.reduce((s, l) => s + PAR_BY_LENGTH[l], 0) / lengths.length;
+  return Math.round(avgParPerHole * holeCount);
 }
 
 // Distinct word lengths used by a course (sorted)
@@ -59,8 +63,8 @@ export function getCourseLengths(courseName) {
   return [...new Set(LENGTH_POOLS[courseName])].sort((a, b) => a - b);
 }
 
-export function generateHoles(courseName) {
-  const lengths = shuffle(LENGTH_POOLS[courseName]);
+export function generateHoles(courseName, holeCount = 9) {
+  const lengths = shuffle(LENGTH_POOLS[courseName]).slice(0, holeCount);
   const names = shuffle(HOLE_NAMES[courseName]);
 
   return lengths.map((wordLength, i) => ({

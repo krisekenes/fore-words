@@ -38,9 +38,12 @@ export default function ForeWords() {
     saveHandicap(value);
   };
 
-  const startCourse = (courseName) => {
-    const generated = generateHoles(courseName);
+  const [holeCount, setHoleCount] = useState(9);
+
+  const startCourse = (courseName, holes = 9) => {
+    const generated = generateHoles(courseName, holes);
     setSelectedCourse(courseName);
+    setHoleCount(holes);
     setHoles(generated);
     setScores([]);
     setCurrentHole(0);
@@ -222,7 +225,7 @@ export default function ForeWords() {
         holes={holes}
         scores={scores}
         selectedCourse={selectedCourse}
-        onPlayAgain={() => startCourse(selectedCourse)}
+        onPlayAgain={() => startCourse(selectedCourse, holeCount)}
         onClubhouse={() => { setScreen("menu"); setSelectedCourse(null); }}
       />
     );
@@ -249,6 +252,7 @@ export default function ForeWords() {
         toastMessage={toastMessage}
         onKey={handleKey}
         onAdvanceHole={advanceHole}
+        onQuit={() => { setScreen("menu"); setSelectedCourse(null); }}
       />
     );
   }
