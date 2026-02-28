@@ -2,7 +2,7 @@ import { HANDICAP_BONUS } from "../gameLogic.js";
 import { styles } from "../styles.js";
 import { globalStyles } from "../styles.js";
 
-export default function MenuScreen({ handicap, setHandicap, onSelectCourse }) {
+export default function MenuScreen({ handicap, setHandicap, onSelectCourse, onProfile }) {
   return (
     <div style={styles.container}>
       <style>{globalStyles}</style>
@@ -44,6 +44,12 @@ export default function MenuScreen({ handicap, setHandicap, onSelectCourse }) {
           style={styles.primaryBtn}
         >
           SELECT COURSE
+        </button>
+        <button
+          onClick={onProfile}
+          style={{ ...styles.primaryBtn, background: "rgba(255,255,255,0.08)", marginTop: "12px" }}
+        >
+          MY PROFILE
         </button>
       </div>
     </div>
