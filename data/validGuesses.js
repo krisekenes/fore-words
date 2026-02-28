@@ -26,7 +26,9 @@ export const VALID_GUESSES = {
 };
 
 // Ensure all answer words are valid guesses
-for (const [len, words] of Object.entries(ANSWERS)) {
-  const dict = VALID_GUESSES[len];
-  if (dict) words.forEach(w => dict.add(w));
+for (const theme of Object.values(ANSWERS)) {
+  for (const [len, words] of Object.entries(theme)) {
+    const dict = VALID_GUESSES[len];
+    if (dict) words.forEach(w => dict.add(w));
+  }
 }

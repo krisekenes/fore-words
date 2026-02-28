@@ -6,8 +6,9 @@ export const checkWord = (word) => {
   return dict ? dict.has(word) : false;
 };
 
-export const pickWord = (length) => {
-  const list = ANSWERS[length] || ANSWERS[5];
+export const pickWord = (length, theme = "classic") => {
+  const pool = ANSWERS[theme];
+  const list = pool?.[length] || ANSWERS.classic[length] || ANSWERS.classic[5];
   return list[Math.floor(Math.random() * list.length)];
 };
 

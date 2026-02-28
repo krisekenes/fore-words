@@ -39,21 +39,23 @@ export default function ForeWords() {
   };
 
   const [holeCount, setHoleCount] = useState(9);
+  const [selectedTheme, setSelectedTheme] = useState("classic");
 
-  const startCourse = (courseName, holes = 9) => {
+  const startCourse = (courseName, holes = 9, theme = "classic") => {
     const generated = generateHoles(courseName, holes);
     setSelectedCourse(courseName);
     setHoleCount(holes);
+    setSelectedTheme(theme);
     setHoles(generated);
     setScores([]);
     setCurrentHole(0);
     setLetterStates({});
-    startHole(generated[0]);
+    startHole(generated[0], theme);
     setScreen("playing");
   };
 
-  const startHole = (h) => {
-    const word = pickWord(h.wordLength);
+  const startHole = (h, theme) => {
+    const word = pickWord(h.wordLength, theme || selectedTheme);
     const bonus = HANDICAP_BONUS(handicap);
     const max = h.par + 2 + bonus;
     setAnswer(word);
@@ -182,7 +184,7 @@ export default function ForeWords() {
     if (currentHole < holes.length - 1) {
       const nextHole = currentHole + 1;
       setCurrentHole(nextHole);
-      startHole(holes[nextHole]);
+      startHole(holes[nextHole], selectedTheme);
     } else {
       saveRound({ course: selectedCourse, scores: newScores, holes });
       setProfile(loadProfile());
@@ -225,7 +227,8 @@ export default function ForeWords() {
         holes={holes}
         scores={scores}
         selectedCourse={selectedCourse}
-        onPlayAgain={() => startCourse(selectedCourse, holeCount)}
+        selectedTheme={selectedTheme}
+        onPlayAgain={() => startCourse(selectedCourse, holeCount, selectedTheme)}
         onClubhouse={() => { setScreen("menu"); setSelectedCourse(null); }}
       />
     );
