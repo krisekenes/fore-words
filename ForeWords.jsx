@@ -7,6 +7,7 @@ import CourseSelect from "./screens/CourseSelect.jsx";
 import PlayingScreen from "./screens/PlayingScreen.jsx";
 import RoundEnd from "./screens/RoundEnd.jsx";
 import ProfileScreen from "./screens/ProfileScreen.jsx";
+import ScoringScreen from "./screens/ScoringScreen.jsx";
 
 export default function ForeWords() {
   const [profile, setProfile] = useState(() => loadProfile());
@@ -199,6 +200,7 @@ export default function ForeWords() {
         setHandicap={updateHandicap}
         onSelectCourse={() => setScreen("courseSelect")}
         onProfile={() => setScreen("profile")}
+        onScoring={() => setScreen("scoring")}
       />
     );
   }
@@ -207,6 +209,14 @@ export default function ForeWords() {
     return (
       <ProfileScreen
         profile={profile}
+        onBack={() => setScreen("menu")}
+      />
+    );
+  }
+
+  if (screen === "scoring") {
+    return (
+      <ScoringScreen
         onBack={() => setScreen("menu")}
       />
     );
