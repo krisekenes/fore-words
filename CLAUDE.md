@@ -68,11 +68,11 @@ State lives in `ForeWords.jsx`. Screen rendered based on `screen` state variable
 
 | Course | Difficulty | Word Lengths | ~Par |
 |--------|-----------|-------------|------|
-| The Links | Beginner | 4,4,4,5,5,5,6,6,7 | 36 |
-| Pine Valley | Intermediate | 5,5,5,6,6,6,6,7,7 | 40 |
-| Royal Dunes | Expert | 5,6,6,6,7,7,7,7,7 | 44 |
+| The Links | Beginner | 4,4,4,5,5,5,6,6,7 | 37 |
+| Pine Valley | Intermediate | 5,5,5,6,6,6,6,7,7 | 44 |
+| Royal Dunes | Expert | 5,6,6,6,7,7,7,7,7 | 49 |
 
-Each session randomizes hole order, names, and par values within the defined ranges.
+Each session randomizes hole order and names. Par is deterministic based on word length.
 
 ## Conventions
 

@@ -4,10 +4,10 @@
 // Par assignment by word length — scales linearly (wordLength - 1)
 // Longer words have larger search spaces and need more guesses to be fair
 const PAR_BY_LENGTH = {
-  4: [3],
-  5: [4],
-  6: [5],
-  7: [6],
+  4: 3,
+  5: 4,
+  6: 5,
+  7: 6,
 };
 
 // Themed hole name pools per course
@@ -41,10 +41,6 @@ function shuffle(arr) {
   return a;
 }
 
-function pick(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
 // Word length distributions per course (pool of 9 to draw from each session)
 const LENGTH_POOLS = {
   "The Links":    [4, 4, 4, 5, 5, 5, 6, 6, 7],
@@ -52,15 +48,10 @@ const LENGTH_POOLS = {
   "Royal Dunes":  [5, 6, 6, 6, 7, 7, 7, 7, 7],
 };
 
-// Average par for a course (deterministic, for display on cards)
+// Total par for a course (deterministic, for display on cards)
 export function getCoursePar(courseName) {
   const lengths = LENGTH_POOLS[courseName];
-  // Use midpoint of par range for each hole
-  const total = lengths.reduce((s, l) => {
-    const pars = PAR_BY_LENGTH[l];
-    return s + pars.reduce((a, b) => a + b, 0) / pars.length;
-  }, 0);
-  return Math.round(total);
+  return lengths.reduce((s, l) => s + PAR_BY_LENGTH[l], 0);
 }
 
 // Distinct word lengths used by a course (sorted)
@@ -74,7 +65,7 @@ export function generateHoles(courseName) {
 
   return lengths.map((wordLength, i) => ({
     num: i + 1,
-    par: pick(PAR_BY_LENGTH[wordLength]),
+    par: PAR_BY_LENGTH[wordLength],
     wordLength,
     name: names[i],
   }));
