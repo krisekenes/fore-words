@@ -1,4 +1,4 @@
-import { COURSES, getCoursePar, getCourseLengths } from "../data/courses.js";
+import { COURSES, QUICK_COURSES, getCoursePar, getCourseLengths } from "../data/courses.js";
 import { THEMES } from "../data/themes.js";
 import { styles } from "../styles.js";
 import { globalStyles } from "../styles.js";
@@ -16,6 +16,7 @@ export default function CourseSelect({ onBack, onStartCourse }) {
   const modeInfo = MODES.find(m => m.key === mode);
   const holeCount = modeInfo.holes;
   const activeTheme = mode === "themed" ? theme : "classic";
+  const activeCourses = mode === "quick" ? QUICK_COURSES : COURSES;
 
   return (
     <div style={styles.container}>
@@ -101,7 +102,7 @@ export default function CourseSelect({ onBack, onStartCourse }) {
         )}
 
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          {Object.entries(COURSES).map(([name, c]) => {
+          {Object.entries(activeCourses).map(([name, c]) => {
             const par = getCoursePar(name, holeCount);
             const lengths = getCourseLengths(name);
             return (
