@@ -78,8 +78,7 @@ export const globalStyles = `
 
   @keyframes flipReveal {
     0% { transform: rotateX(0deg); }
-    45% { transform: rotateX(90deg); }
-    55% { transform: rotateX(90deg); }
+    50% { transform: rotateX(90deg); }
     100% { transform: rotateX(0deg); }
   }
 

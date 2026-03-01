@@ -104,7 +104,7 @@ export default function ForeWords() {
 
     const rowIdx = newGuesses.length - 1;
     for (let j = 0; j < guess.length; j++) {
-      const delay = j * 300 + 280;
+      const delay = j * 300 + 250;
       setTimeout(() => {
         setRevealedTiles(prev => {
           const next = new Set(prev);
@@ -114,7 +114,7 @@ export default function ForeWords() {
       }, delay);
     }
 
-    const totalRevealTime = (guess.length - 1) * 300 + 600;
+    const totalRevealTime = (guess.length - 1) * 300 + 500;
     setTimeout(() => {
       setLetterStates(prev => {
         const updated = { ...prev };

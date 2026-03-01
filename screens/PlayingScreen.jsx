@@ -26,10 +26,14 @@ export default function PlayingScreen({
   onQuit,
 }) {
   const [showQuitConfirm, setShowQuitConfirm] = useState(false);
-  const miniScoreTotal = scores.reduce((s, v) => s + v, 0);
-  const miniParTotal = holes.slice(0, currentHole).reduce((s, h) => s + h.par, 0);
+  const currentHoleScore = gameState === "won" ? guesses.length
+    : gameState === "lost" ? maxGuesses + 1
+    : undefined;
+  const miniScoreTotal = scores.reduce((s, v) => s + v, 0) + (currentHoleScore || 0);
+  const miniParTotal = holes.slice(0, currentHole).reduce((s, h) => s + h.par, 0) + (currentHoleScore !== undefined ? hole.par : 0);
+  const thruCount = currentHole + (currentHoleScore !== undefined ? 1 : 0);
   const miniDiff = miniScoreTotal - miniParTotal;
-  const miniDiffStr = currentHole === 0 ? "E" : miniDiff === 0 ? "E" : miniDiff > 0 ? `+${miniDiff}` : `${miniDiff}`;
+  const miniDiffStr = thruCount === 0 ? "E" : miniDiff === 0 ? "E" : miniDiff > 0 ? `+${miniDiff}` : `${miniDiff}`;
 
   const renderTile = (letter, state, index, isRevealing, rowIdx) => {
     const delay = isRevealing ? index * 0.3 : 0;
@@ -64,11 +68,12 @@ export default function PlayingScreen({
             border: `2px solid ${borderColor}`,
             borderRadius: "4px",
             backgroundColor: bgColor,
-            animation: isRevealing ? `flipReveal 0.6s cubic-bezier(0.4, 0, 0.2, 1) ${delay}s both` : letter && !state ? "popIn 0.1s ease" : "none",
+            animation: isRevealing ? `flipReveal 0.5s ease-in-out ${delay}s both` : letter && !state ? "popIn 0.1s ease" : "none",
             textTransform: "uppercase",
             letterSpacing: "1px",
             transformStyle: "preserve-3d",
-            transition: "background-color 0.15s ease, border-color 0.15s ease",
+            willChange: isRevealing ? "transform" : "auto",
+            transition: "background-color 0s, border-color 0s",
           }}
         >
           {letter}
@@ -104,7 +109,7 @@ export default function PlayingScreen({
                   border: isAbsent ? "1px solid rgba(255,255,255,0.04)" : "none",
                   backgroundColor: bg,
                   color: textColor,
-                  fontSize: isWide ? "11px" : "14px",
+                  fontSize: key === "⌫" ? "20px" : isWide ? "11px" : "14px",
                   fontWeight: 600,
                   fontFamily: "'DM Sans', sans-serif",
                   cursor: isAbsent ? "default" : "pointer",
@@ -188,7 +193,7 @@ export default function PlayingScreen({
             {miniDiffStr}
           </div>
           <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "10px", color: "#6a7a6e", letterSpacing: "1px" }}>
-            THRU {currentHole}
+            THRU {thruCount}
           </div>
         </div>
       </div>
@@ -277,7 +282,11 @@ export default function PlayingScreen({
         {holes.map((h, i) => {
           const s = scores[i];
           const isCurrent = i === currentHole;
-          const info = s !== undefined ? getScoreName(s, h.par) : null;
+          const currentHoleScore = isCurrent && gameState === "won" ? guesses.length
+            : isCurrent && gameState === "lost" ? maxGuesses + 1
+            : undefined;
+          const displayScore = s !== undefined ? s : currentHoleScore;
+          const info = displayScore !== undefined ? getScoreName(displayScore, h.par) : null;
           return (
             <div key={i} style={{
               width: "28px",
@@ -289,11 +298,11 @@ export default function PlayingScreen({
               fontSize: "11px",
               fontWeight: 600,
               fontFamily: "'DM Sans', sans-serif",
-              background: isCurrent ? "rgba(201,169,78,0.15)" : s !== undefined ? "rgba(255,255,255,0.05)" : "transparent",
+              background: isCurrent ? "rgba(201,169,78,0.15)" : displayScore !== undefined ? "rgba(255,255,255,0.05)" : "transparent",
               border: isCurrent ? "1.5px solid #c9a94e" : "1px solid rgba(255,255,255,0.06)",
               color: info ? info.color : isCurrent ? "#c9a94e" : "#3a4a3e",
             }}>
-              {s !== undefined ? s : i + 1}
+              {displayScore !== undefined ? displayScore : i + 1}
             </div>
           );
         })}
