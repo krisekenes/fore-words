@@ -208,7 +208,7 @@ export default function ForeWords() {
     if (currentHole < holes.length - 1) {
       const nextHole = currentHole + 1;
       setCurrentHole(nextHole);
-      const nextWord = isDaily && dailyWords ? dailyWords[nextHole] : null;
+      const nextWord = (isDaily && dailyWords && nextHole < dailyWords.length) ? dailyWords[nextHole] : null;
       startHole(holes[nextHole], selectedTheme, nextWord);
     } else {
       clearGameState();
@@ -227,8 +227,11 @@ export default function ForeWords() {
         theme: selectedTheme,
         gameMode,
       };
-      const alreadyEarned = new Set(freshProfile.badges.map(b => b.id));
-      const newlyEarned = BADGES.filter(b => !alreadyEarned.has(b.id) && b.check(roundResult, freshProfile));
+      const alreadyEarned = new Set((freshProfile.badges || []).map(b => b.id));
+      const newlyEarned = BADGES.filter(b => {
+        if (alreadyEarned.has(b.id)) return false;
+        try { return b.check(roundResult, freshProfile); } catch { return false; }
+      });
       if (newlyEarned.length > 0) saveBadges(newlyEarned.map(b => b.id));
       setPendingBadges(newlyEarned);
 

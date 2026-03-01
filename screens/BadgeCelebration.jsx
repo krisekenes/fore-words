@@ -12,6 +12,7 @@ export default function BadgeCelebration({ badges, onAllClaimed }) {
   const [index, setIndex] = useState(0);
 
   const badge = badges[index];
+  if (!badge) return null;
   const rarityColor = RARITY_COLORS[badge.rarity];
   const rarityGlow = RARITY_GLOW[badge.rarity];
   const isPlatinum = badge.rarity === "platinum";

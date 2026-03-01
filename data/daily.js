@@ -1,11 +1,13 @@
 import { ANSWERS } from "./answers.js";
+import { PAR_BY_LENGTH } from "./courses.js";
 
 export const DAILY_COURSE_NAME = "Daily Challenge";
-export const DAILY_PAR = 14; // 4+4+6 for lengths 4,5,7
 
-const PAR_BY_LENGTH = { 4: 4, 5: 4, 7: 6 };
 const DAILY_LENGTHS = [4, 5, 7];
 const DAILY_HOLE_NAMES = ["Morning Tee", "The Turn", "The Gauntlet"];
+
+// Derived so it stays in sync if DAILY_LENGTHS ever changes
+export const DAILY_PAR = DAILY_LENGTHS.reduce((s, l) => s + PAR_BY_LENGTH[l], 0);
 
 // Fast, deterministic seeded RNG (mulberry32)
 function mulberry32(seed) {
@@ -20,7 +22,10 @@ function mulberry32(seed) {
 
 function getDailySeed() {
   const d = new Date();
-  return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return parseInt(`${y}${m}${day}`, 10);
 }
 
 // "2026-03-01" — used for storage comparisons

@@ -70,6 +70,7 @@ export function saveRound({ course, scores, holes, theme, gameMode, isDaily }) {
 export function saveBadges(newBadgeIds) {
   const profile = loadProfile();
   const now = new Date().toISOString();
+  profile.badges = profile.badges || [];
   const existingIds = new Set(profile.badges.map(b => b.id));
   for (const id of newBadgeIds) {
     if (!existingIds.has(id)) profile.badges.push({ id, earnedAt: now });

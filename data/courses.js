@@ -4,7 +4,7 @@
 // Par assignment by word length — non-linear to reflect that shorter words
 // give less information per guess, making them proportionally harder.
 // 4 and 5 letter words share par 4; longer words scale from there.
-const PAR_BY_LENGTH = {
+export const PAR_BY_LENGTH = {
   4: 4,
   5: 4,
   6: 5,
