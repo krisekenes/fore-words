@@ -1,4 +1,4 @@
-import { COURSES, QUICK_COURSES, MASTERS_COURSE, getCoursePar, getCourseLengths } from "../data/courses.js";
+import { COURSES, QUICK_COURSES, MASTERS_COURSE, getCoursePar, getCourseLengths, getThemedCourse } from "../data/courses.js";
 import { THEMES } from "../data/themes.js";
 import { styles } from "../styles.js";
 import { globalStyles } from "../styles.js";
@@ -100,6 +100,10 @@ export default function CourseSelect({ onBack, onStartCourse }) {
           {Object.entries(activeCourses).map(([name, c]) => {
             const par = getCoursePar(name, holeCount);
             const lengths = getCourseLengths(name);
+            const themeKey = mode === "experimental" ? "experimental" : mode === "themed" ? theme : null;
+            const themed = themeKey ? getThemedCourse(name, themeKey) : null;
+            const displayName = themed?.displayName || name;
+            const displayDesc = themed?.description || c.description;
             return (
               <button
                 key={name}
@@ -117,10 +121,10 @@ export default function CourseSelect({ onBack, onStartCourse }) {
                 onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
               >
                 <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "20px", color: "#E8E0D0", marginBottom: "4px", fontWeight: 600 }}>
-                  {name}
+                  {displayName}
                 </div>
                 <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "#8BA89A", marginBottom: "12px" }}>
-                  {c.description}
+                  {displayDesc}
                 </div>
                 <div style={{ display: "flex", gap: "16px", fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "#6a8a6e" }}>
                   <span>~Par {par}</span>

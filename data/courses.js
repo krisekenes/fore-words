@@ -120,6 +120,80 @@ export const MASTERS_COURSE = {
   },
 };
 
+// Themed display names and descriptions per theme × course.
+// Keys are theme identifiers; inner keys match COURSES course names.
+export const THEMED_COURSES = {
+  sports: {
+    "The Links":    { displayName: "The Practice Range", description: "Warm up your swing with common sports terms" },
+    "Pine Valley":  { displayName: "Championship Lane", description: "Mid-level athletic vocabulary for contenders" },
+    "Royal Dunes":  { displayName: "The Grand Slam", description: "Elite sports words — only MVPs finish under par" },
+  },
+  geography: {
+    "The Links":    { displayName: "The Lowlands", description: "Gentle terrain for beginning explorers" },
+    "Pine Valley":  { displayName: "Mountain Pass", description: "Navigate trickier landforms and place names" },
+    "Royal Dunes":  { displayName: "The Summit", description: "Peak-level geography — unforgiving and remote" },
+  },
+  nature: {
+    "The Links":    { displayName: "Meadow Creek", description: "Easy flora and fauna to get you started" },
+    "Pine Valley":  { displayName: "The Canopy", description: "Deeper into the wilderness with tougher words" },
+    "Royal Dunes":  { displayName: "Wildfire Ridge", description: "Harsh elements and rare natural phenomena" },
+  },
+  animals: {
+    "The Links":    { displayName: "The Watering Hole", description: "Friendly creatures everyone knows" },
+    "Pine Valley":  { displayName: "Wolf Trail", description: "Track down trickier species and breeds" },
+    "Royal Dunes":  { displayName: "The Lion's Den", description: "Only apex wordsmiths survive this habitat" },
+  },
+  food: {
+    "The Links":    { displayName: "The Pantry", description: "Everyday ingredients and kitchen staples" },
+    "Pine Valley":  { displayName: "The Bistro", description: "A more refined palate of culinary terms" },
+    "Royal Dunes":  { displayName: "The Michelin Star", description: "Rare dishes and gourmet vocabulary" },
+  },
+  appliances: {
+    "The Links":    { displayName: "The Workbench", description: "Common tools and household gadgets" },
+    "Pine Valley":  { displayName: "The Power Grid", description: "Intermediate devices and mechanical terms" },
+    "Royal Dunes":  { displayName: "Mission Control", description: "Advanced engineering and high-tech systems" },
+  },
+  arts: {
+    "The Links":    { displayName: "The Sketch Pad", description: "Basic art terms and creative fundamentals" },
+    "Pine Valley":  { displayName: "The Gallery", description: "A curated collection of artistic vocabulary" },
+    "Royal Dunes":  { displayName: "The Masterpiece", description: "Only virtuosos can decode these works" },
+  },
+  music: {
+    "The Links":    { displayName: "The Open Mic", description: "Casual musical terms for any audience" },
+    "Pine Valley":  { displayName: "The Concert Hall", description: "Richer compositions and instrumental words" },
+    "Royal Dunes":  { displayName: "The Symphony", description: "A grand finale of complex musical terms" },
+  },
+  latin: {
+    "The Links":    { displayName: "The Forum", description: "Common English words with Latin roots" },
+    "Pine Valley":  { displayName: "The Colosseum", description: "Sturdier Latin-derived vocabulary" },
+    "Royal Dunes":  { displayName: "The Pantheon", description: "Venerable words from the deepest roots" },
+  },
+  science: {
+    "The Links":    { displayName: "The Lab Bench", description: "Introductory science terms and elements" },
+    "Pine Valley":  { displayName: "The Research Wing", description: "Intermediate experiments and compounds" },
+    "Royal Dunes":  { displayName: "The Reactor", description: "Advanced science — handle with caution" },
+  },
+  movies: {
+    "The Links":    { displayName: "The Audition", description: "Blockbuster terms everyone recognizes" },
+    "Pine Valley":  { displayName: "The Director's Cut", description: "Behind-the-scenes cinema vocabulary" },
+    "Royal Dunes":  { displayName: "The Premiere", description: "Red-carpet words for true cinephiles" },
+  },
+  books: {
+    "The Links":    { displayName: "The First Chapter", description: "Approachable literary terms for new readers" },
+    "Pine Valley":  { displayName: "The Library", description: "A deeper shelf of literary vocabulary" },
+    "Royal Dunes":  { displayName: "The Archives", description: "Rare editions and obscure literary words" },
+  },
+  experimental: {
+    "The Links":    { displayName: "The Prototype", description: "Test basic features in a safe environment" },
+    "Pine Valley":  { displayName: "Beta Chamber", description: "Mid-level experiments with new mechanics" },
+    "Royal Dunes":  { displayName: "The Accelerator", description: "Push experimental features to the limit" },
+  },
+};
+
+export function getThemedCourse(courseName, theme) {
+  return THEMED_COURSES[theme]?.[courseName] || null;
+}
+
 export const QUICK_COURSES = {
   "Morning Tee": {
     description: "A gentle warm-up to start the day",

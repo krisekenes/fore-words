@@ -37,6 +37,7 @@ export default function PlayingScreen({
   scores,
   currentHole,
   selectedCourse,
+  displayCourseName,
   maxGuesses,
   shakeRow,
   revealRow,
@@ -207,7 +208,7 @@ export default function PlayingScreen({
           </button>
           <div>
             <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", letterSpacing: "2px", color: "#6a7a6e" }}>
-              {selectedCourse?.toUpperCase()}
+              {(displayCourseName || selectedCourse)?.toUpperCase()}
             </div>
             <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "18px", color: "#E8E0D0" }}>
               Hole {hole.num} <span style={{ color: "#8BA89A", fontSize: "14px", fontWeight: 400 }}>· {hole.name}</span>
