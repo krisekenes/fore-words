@@ -14,31 +14,65 @@ import WelcomeScreen from "./screens/WelcomeScreen.jsx";
 
 export default function ForeWords() {
   const [profile, setProfile] = useState(() => loadProfile());
-  const [screen, setScreen] = useState(() => profile.hasSeenWelcome ? "menu" : "welcome");
+  // Compute saved game once synchronously so the screen starts as "playing" without a menu flash
+  const [_initialSaved] = useState(() => {
+    const lastScreen = loadLastScreen();
+    if (lastScreen === "playing" && profile.hasSeenWelcome) return loadGameState() || null;
+    return null;
+  });
+  const [screen, setScreen] = useState(() => {
+    if (!profile.hasSeenWelcome) return "welcome";
+    if (_initialSaved) return "playing";
+    return "menu";
+  });
   const [handicap, setHandicap] = useState(profile.handicap);
-  const [selectedCourse, setSelectedCourse] = useState(null);
-  const [currentHole, setCurrentHole] = useState(0);
-  const [holes, setHoles] = useState([]);
-  const [scores, setScores] = useState([]);
-  const [answer, setAnswer] = useState("");
-  const [guesses, setGuesses] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState(() => _initialSaved?.selectedCourse ?? null);
+  const [currentHole, setCurrentHole] = useState(() => _initialSaved?.currentHole ?? 0);
+  const [holes, setHoles] = useState(() => _initialSaved?.holes ?? []);
+  const [scores, setScores] = useState(() => _initialSaved?.scores ?? []);
+  const [answer, setAnswer] = useState(() => _initialSaved?.answer ?? "");
+  const [guesses, setGuesses] = useState(() => _initialSaved?.guesses ?? []);
   const [currentGuess, setCurrentGuess] = useState("");
-  const [maxGuesses, setMaxGuesses] = useState(6);
-  const [gameState, setGameState] = useState("playing");
+  const [maxGuesses, setMaxGuesses] = useState(() => _initialSaved?.maxGuesses ?? 6);
+  const [gameState, setGameState] = useState(() => {
+    if (!_initialSaved) return "playing";
+    const gs = _initialSaved.gameState;
+    return gs === "won" || gs === "lost" ? gs : "playing";
+  });
   const [shakeRow, setShakeRow] = useState(false);
   const [revealRow, setRevealRow] = useState(-1);
-  const [letterStates, setLetterStates] = useState({});
-  const [holeMessage, setHoleMessage] = useState(null);
-  const [revealedTiles, setRevealedTiles] = useState(new Set());
+  const [letterStates, setLetterStates] = useState(() => _initialSaved?.letterStates ?? {});
+  const [holeMessage, setHoleMessage] = useState(() => {
+    if (!_initialSaved) return null;
+    const gs = _initialSaved.gameState;
+    const h = _initialSaved.holes[_initialSaved.currentHole];
+    if (gs === "won") return getScoreName(_initialSaved.guesses.length, h.par);
+    if (gs === "lost") {
+      const score = _initialSaved.maxGuesses + 1;
+      const info = getScoreName(score, h.par);
+      return { ...info, name: `${info.name} (${_initialSaved.answer})`, color: "#8B0000" };
+    }
+    return null;
+  });
+  const [revealedTiles, setRevealedTiles] = useState(() => {
+    if (!_initialSaved) return new Set();
+    const revealed = new Set();
+    for (let i = 0; i < _initialSaved.guesses.length; i++) {
+      for (let j = 0; j < _initialSaved.guesses[i].word.length; j++) {
+        revealed.add(`${i}-${j}`);
+      }
+    }
+    return revealed;
+  });
   const [toastMessage, setToastMessage] = useState(null);
   const hole = holes[currentHole] || null;
 
   const [pendingBadges, setPendingBadges] = useState([]);
-  const [holeCount, setHoleCount] = useState(9);
-  const [selectedTheme, setSelectedTheme] = useState("classic");
-  const [gameMode, setGameMode] = useState("standard");
-  const [isDaily, setIsDaily] = useState(false);
-  const [dailyWords, setDailyWords] = useState(null);
+  const [holeCount, setHoleCount] = useState(() => _initialSaved?.holeCount ?? 9);
+  const [selectedTheme, setSelectedTheme] = useState(() => _initialSaved?.selectedTheme ?? "classic");
+  const [gameMode, setGameMode] = useState(() => _initialSaved?.gameMode ?? "standard");
+  const [isDaily, setIsDaily] = useState(() => _initialSaved?.isDaily ?? false);
+  const [dailyWords, setDailyWords] = useState(() => _initialSaved?.dailyWords ?? null);
 
   const themeKey = gameMode === "experimental" ? "experimental" : selectedTheme !== "classic" ? selectedTheme : null;
   const displayCourseName = (themeKey && selectedCourse ? getThemedCourse(selectedCourse, themeKey)?.displayName : null) || selectedCourse;
@@ -307,7 +341,7 @@ export default function ForeWords() {
 
   // Auto-resume only if the user was actively playing when they left.
   // Uses the ref value captured before the saveLastScreen effect runs.
-  const [hasAutoResumed, setHasAutoResumed] = useState(false);
+  const [hasAutoResumed, setHasAutoResumed] = useState(() => _initialSaved !== null);
   useEffect(() => {
     if (hasAutoResumed) return;
     setHasAutoResumed(true);
