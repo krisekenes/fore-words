@@ -62,6 +62,33 @@ export function saveRound({ course, scores, holes }) {
   saveProfile(profile);
 }
 
+const GAME_STATE_KEY = "forewords_gamestate";
+
+export function saveGameState(state) {
+  try {
+    localStorage.setItem(GAME_STATE_KEY, JSON.stringify(state));
+  } catch {
+    // silently fail
+  }
+}
+
+export function loadGameState() {
+  try {
+    const raw = localStorage.getItem(GAME_STATE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function clearGameState() {
+  try {
+    localStorage.removeItem(GAME_STATE_KEY);
+  } catch {
+    // silently fail
+  }
+}
+
 export function getStats(profile) {
   const { rounds } = profile;
   if (rounds.length === 0) {

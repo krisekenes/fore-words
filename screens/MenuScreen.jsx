@@ -2,7 +2,7 @@ import { HANDICAP_BONUS } from "../gameLogic.js";
 import { styles } from "../styles.js";
 import { globalStyles } from "../styles.js";
 
-export default function MenuScreen({ handicap, setHandicap, onSelectCourse, onProfile, onScoring }) {
+export default function MenuScreen({ handicap, setHandicap, onSelectCourse, onProfile, onScoring, savedGame, onResume, onDiscardSave }) {
   return (
     <div style={styles.container}>
       <style>{globalStyles}</style>
@@ -39,11 +39,38 @@ export default function MenuScreen({ handicap, setHandicap, onSelectCourse, onPr
           </div>
         </div>
 
+        {savedGame && (
+          <div style={{
+            background: "rgba(201,169,78,0.08)",
+            border: "1px solid rgba(201,169,78,0.2)",
+            borderRadius: "10px",
+            padding: "14px 16px",
+            marginBottom: "16px",
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+          }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "#c9a94e", fontWeight: 600, marginBottom: "2px" }}>
+                Round in progress
+              </div>
+              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "#8BA89A" }}>
+                {savedGame.selectedCourse} · Hole {savedGame.currentHole + 1} of {savedGame.holes.length}
+              </div>
+            </div>
+            <button
+              onClick={onResume}
+              style={{ ...styles.primaryBtn, padding: "8px 16px", fontSize: "12px", background: "linear-gradient(135deg, #8a7a30, #6a5a20)" }}
+            >
+              RESUME
+            </button>
+          </div>
+        )}
         <button
           onClick={onSelectCourse}
           style={styles.primaryBtn}
         >
-          SELECT COURSE
+          {savedGame ? "NEW COURSE" : "SELECT COURSE"}
         </button>
         <div style={{ display: "flex", gap: "12px", marginTop: "12px" }}>
           <button

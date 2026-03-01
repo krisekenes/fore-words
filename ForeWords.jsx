@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { COURSES, generateHoles } from "./data/courses.js";
 import { checkWord, pickWord, evaluateGuess, getScoreName, HANDICAP_BONUS } from "./gameLogic.js";
-import { loadProfile, saveHandicap, saveRound, markWelcomeSeen } from "./storage.js";
+import { loadProfile, saveHandicap, saveRound, markWelcomeSeen, saveGameState, loadGameState, clearGameState } from "./storage.js";
 import MenuScreen from "./screens/MenuScreen.jsx";
 import CourseSelect from "./screens/CourseSelect.jsx";
 import PlayingScreen from "./screens/PlayingScreen.jsx";
@@ -44,6 +44,7 @@ export default function ForeWords() {
   const [selectedTheme, setSelectedTheme] = useState("classic");
 
   const startCourse = (courseName, holes = 9, theme = "classic") => {
+    clearGameState();
     const generated = generateHoles(courseName, holes);
     setSelectedCourse(courseName);
     setHoleCount(holes);
@@ -188,10 +189,60 @@ export default function ForeWords() {
       setCurrentHole(nextHole);
       startHole(holes[nextHole], selectedTheme);
     } else {
+      clearGameState();
       saveRound({ course: selectedCourse, scores: newScores, holes });
       setProfile(loadProfile());
       setScreen("roundEnd");
     }
+  };
+
+  const quitRound = () => {
+    saveGameState({
+      selectedCourse,
+      selectedTheme,
+      holeCount,
+      holes,
+      scores,
+      currentHole,
+      answer,
+      guesses,
+      maxGuesses,
+      letterStates,
+    });
+    setScreen("menu");
+    setSelectedCourse(null);
+  };
+
+  const resumeRound = () => {
+    const saved = loadGameState();
+    if (!saved) return;
+
+    setSelectedCourse(saved.selectedCourse);
+    setSelectedTheme(saved.selectedTheme);
+    setHoleCount(saved.holeCount);
+    setHoles(saved.holes);
+    setScores(saved.scores);
+    setCurrentHole(saved.currentHole);
+    setAnswer(saved.answer);
+    setGuesses(saved.guesses);
+    setCurrentGuess("");
+    setMaxGuesses(saved.maxGuesses);
+    setGameState("playing");
+    setRevealRow(-1);
+    setHoleMessage(null);
+    setLetterStates(saved.letterStates || {});
+
+    // Mark all previous guesses as revealed
+    const revealed = new Set();
+    for (let i = 0; i < saved.guesses.length; i++) {
+      for (let j = 0; j < saved.guesses[i].word.length; j++) {
+        revealed.add(`${i}-${j}`);
+      }
+    }
+    setRevealedTiles(revealed);
+
+    clearGameState();
+    setScreen("playing");
   };
 
   if (screen === "welcome") {
@@ -208,6 +259,7 @@ export default function ForeWords() {
   }
 
   if (screen === "menu") {
+    const savedGame = loadGameState();
     return (
       <MenuScreen
         handicap={handicap}
@@ -215,6 +267,9 @@ export default function ForeWords() {
         onSelectCourse={() => setScreen("courseSelect")}
         onProfile={() => setScreen("profile")}
         onScoring={() => setScreen("scoring")}
+        savedGame={savedGame}
+        onResume={resumeRound}
+        onDiscardSave={clearGameState}
       />
     );
   }
@@ -279,7 +334,7 @@ export default function ForeWords() {
         toastMessage={toastMessage}
         onKey={handleKey}
         onAdvanceHole={advanceHole}
-        onQuit={() => { setScreen("menu"); setSelectedCourse(null); }}
+        onQuit={quitRound}
       />
     );
   }
