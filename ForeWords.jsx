@@ -1,17 +1,18 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { COURSES, generateHoles } from "./data/courses.js";
 import { checkWord, pickWord, evaluateGuess, getScoreName, HANDICAP_BONUS } from "./gameLogic.js";
-import { loadProfile, saveHandicap, saveRound } from "./storage.js";
+import { loadProfile, saveHandicap, saveRound, markWelcomeSeen } from "./storage.js";
 import MenuScreen from "./screens/MenuScreen.jsx";
 import CourseSelect from "./screens/CourseSelect.jsx";
 import PlayingScreen from "./screens/PlayingScreen.jsx";
 import RoundEnd from "./screens/RoundEnd.jsx";
 import ProfileScreen from "./screens/ProfileScreen.jsx";
 import ScoringScreen from "./screens/ScoringScreen.jsx";
+import WelcomeScreen from "./screens/WelcomeScreen.jsx";
 
 export default function ForeWords() {
   const [profile, setProfile] = useState(() => loadProfile());
-  const [screen, setScreen] = useState("menu");
+  const [screen, setScreen] = useState(() => profile.hasSeenWelcome ? "menu" : "welcome");
   const [handicap, setHandicap] = useState(profile.handicap);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [currentHole, setCurrentHole] = useState(0);
@@ -192,6 +193,19 @@ export default function ForeWords() {
       setScreen("roundEnd");
     }
   };
+
+  if (screen === "welcome") {
+    return (
+      <WelcomeScreen
+        onComplete={(selectedHandicap) => {
+          updateHandicap(selectedHandicap);
+          markWelcomeSeen();
+          setProfile(loadProfile());
+          setScreen("menu");
+        }}
+      />
+    );
+  }
 
   if (screen === "menu") {
     return (

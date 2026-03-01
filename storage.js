@@ -3,6 +3,7 @@ const STORAGE_KEY = "forewords_profile";
 const DEFAULT_PROFILE = {
   handicap: 10,
   rounds: [],
+  hasSeenWelcome: false,
 };
 
 export function loadProfile() {
@@ -22,6 +23,12 @@ export function saveProfile(profile) {
   } catch {
     // localStorage full or unavailable — silently fail
   }
+}
+
+export function markWelcomeSeen() {
+  const profile = loadProfile();
+  profile.hasSeenWelcome = true;
+  saveProfile(profile);
 }
 
 export function saveHandicap(handicap) {
