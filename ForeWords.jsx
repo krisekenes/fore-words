@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { COURSES, generateHoles, getThemedCourse } from "./data/courses.js";
 import { checkWord, pickWord, evaluateGuess, getScoreName, HANDICAP_BONUS, computeHeatmap } from "./gameLogic.js";
-import { loadProfile, saveHandicap, saveRound, saveBadges, markWelcomeSeen, saveGameState, loadGameState, clearGameState, saveLastScreen, loadLastScreen } from "./storage.js";
+import { loadProfile, saveHandicap, saveRound, saveBadges, markWelcomeSeen, saveGameState, loadGameState, clearGameState, saveLastScreen, loadLastScreen, getTodaysDailyResult } from "./storage.js";
 import { BADGES } from "./data/badges.js";
+import { getDailyHolesAndWords, DAILY_COURSE_NAME } from "./data/daily.js";
 import MenuScreen from "./screens/MenuScreen.jsx";
 import CourseSelect from "./screens/CourseSelect.jsx";
 import PlayingScreen from "./screens/PlayingScreen.jsx";
@@ -30,40 +31,26 @@ export default function ForeWords() {
   const [holeMessage, setHoleMessage] = useState(null);
   const [revealedTiles, setRevealedTiles] = useState(new Set());
   const [toastMessage, setToastMessage] = useState(null);
-  const course = selectedCourse ? COURSES[selectedCourse] : null;
   const hole = holes[currentHole] || null;
+
+  const [pendingBadges, setPendingBadges] = useState([]);
+  const [holeCount, setHoleCount] = useState(9);
+  const [selectedTheme, setSelectedTheme] = useState("classic");
+  const [gameMode, setGameMode] = useState("standard");
+  const [isDaily, setIsDaily] = useState(false);
+  const [dailyWords, setDailyWords] = useState(null);
+
+  const themeKey = gameMode === "experimental" ? "experimental" : selectedTheme !== "classic" ? selectedTheme : null;
+  const displayCourseName = (themeKey && selectedCourse ? getThemedCourse(selectedCourse, themeKey)?.displayName : null) || selectedCourse;
 
   const updateHandicap = (value) => {
     setHandicap(value);
     saveHandicap(value);
   };
 
-  const [pendingBadges, setPendingBadges] = useState([]);
-
-  const [holeCount, setHoleCount] = useState(9);
-  const [selectedTheme, setSelectedTheme] = useState("classic");
-  const [gameMode, setGameMode] = useState("standard");
-
-  const themeKey = gameMode === "experimental" ? "experimental" : selectedTheme !== "classic" ? selectedTheme : null;
-  const displayCourseName = (themeKey && selectedCourse ? getThemedCourse(selectedCourse, themeKey)?.displayName : null) || selectedCourse;
-
-  const startCourse = (courseName, holes = 9, theme = "classic", mode = "standard") => {
-    clearGameState();
-    const generated = generateHoles(courseName, holes);
-    setSelectedCourse(courseName);
-    setHoleCount(holes);
-    setSelectedTheme(theme);
-    setGameMode(mode);
-    setHoles(generated);
-    setScores([]);
-    setCurrentHole(0);
-    setLetterStates({});
-    startHole(generated[0], theme);
-    setScreen("playing");
-  };
-
-  const startHole = (h, theme) => {
-    const word = pickWord(h.wordLength, theme || selectedTheme);
+  // startHole accepts an optional pre-determined word (used for daily)
+  const startHole = (h, theme, overrideWord = null) => {
+    const word = overrideWord || pickWord(h.wordLength, theme || selectedTheme);
     const bonus = HANDICAP_BONUS(handicap);
     const max = h.par + 2 + bonus;
     setAnswer(word);
@@ -75,6 +62,40 @@ export default function ForeWords() {
     setHoleMessage(null);
     setLetterStates({});
     setRevealedTiles(new Set());
+  };
+
+  const startCourse = (courseName, count = 9, theme = "classic", mode = "standard") => {
+    clearGameState();
+    const generated = generateHoles(courseName, count);
+    setSelectedCourse(courseName);
+    setHoleCount(count);
+    setSelectedTheme(theme);
+    setGameMode(mode);
+    setIsDaily(false);
+    setDailyWords(null);
+    setHoles(generated);
+    setScores([]);
+    setCurrentHole(0);
+    setLetterStates({});
+    startHole(generated[0], theme);
+    setScreen("playing");
+  };
+
+  const startDaily = () => {
+    clearGameState();
+    const { holes: dailyHoles, words } = getDailyHolesAndWords();
+    setSelectedCourse(DAILY_COURSE_NAME);
+    setHoleCount(3);
+    setSelectedTheme("classic");
+    setGameMode("standard");
+    setIsDaily(true);
+    setDailyWords(words);
+    setHoles(dailyHoles);
+    setScores([]);
+    setCurrentHole(0);
+    setLetterStates({});
+    startHole(dailyHoles[0], "classic", words[0]);
+    setScreen("playing");
   };
 
   const showToast = useCallback((msg) => {
@@ -92,7 +113,6 @@ export default function ForeWords() {
     }
 
     const guess = currentGuess.toUpperCase();
-
     const isValid = checkWord(guess);
 
     if (!isValid) {
@@ -188,10 +208,11 @@ export default function ForeWords() {
     if (currentHole < holes.length - 1) {
       const nextHole = currentHole + 1;
       setCurrentHole(nextHole);
-      startHole(holes[nextHole], selectedTheme);
+      const nextWord = isDaily && dailyWords ? dailyWords[nextHole] : null;
+      startHole(holes[nextHole], selectedTheme, nextWord);
     } else {
       clearGameState();
-      saveRound({ course: selectedCourse, scores: newScores, holes, theme: selectedTheme, gameMode });
+      saveRound({ course: selectedCourse, scores: newScores, holes, theme: selectedTheme, gameMode, isDaily });
 
       const freshProfile = loadProfile();
       const roundResult = {
@@ -217,13 +238,13 @@ export default function ForeWords() {
   };
 
   const quitRound = () => {
-    // Game state is already autosaved — just navigate away
     setScreen("menu");
     setSelectedCourse(null);
   };
 
   const resumeRound = (saved) => {
-    const state = saved || loadGameState();
+    // Guard against a raw DOM event being passed (e.g. from onClick={fn} without wrapper)
+    const state = (saved && saved.selectedCourse) ? saved : loadGameState();
     if (!state) return;
 
     setSelectedCourse(state.selectedCourse);
@@ -237,6 +258,8 @@ export default function ForeWords() {
     setGuesses(state.guesses);
     setCurrentGuess("");
     setMaxGuesses(state.maxGuesses);
+    setIsDaily(state.isDaily || false);
+    setDailyWords(state.dailyWords || null);
     const restoredState = state.gameState === "won" || state.gameState === "lost" ? state.gameState : "playing";
     setGameState(restoredState);
     setRevealRow(-1);
@@ -252,7 +275,6 @@ export default function ForeWords() {
     }
     setLetterStates(state.letterStates || {});
 
-    // Mark all previous guesses as revealed
     const revealed = new Set();
     for (let i = 0; i < state.guesses.length; i++) {
       for (let j = 0; j < state.guesses[i].word.length; j++) {
@@ -260,32 +282,34 @@ export default function ForeWords() {
       }
     }
     setRevealedTiles(revealed);
-
     setScreen("playing");
   };
 
-  // Persist screen so reload can return to the right place
+  // Persist the current screen so reload returns to the right place.
+  // Capture the pre-mount value with a ref BEFORE this effect overwrites it.
+  const initialLastScreen = useRef(loadLastScreen());
   useEffect(() => {
     saveLastScreen(screen);
   }, [screen]);
 
-  // Autosave game state whenever gameplay progresses
+  // Autosave gameplay state on every meaningful change
   useEffect(() => {
     if (screen !== "playing" || !selectedCourse) return;
     saveGameState({
       selectedCourse, selectedTheme, gameMode, holeCount,
       holes, scores, currentHole, answer, guesses, maxGuesses, letterStates, gameState,
+      isDaily, dailyWords,
     });
   }, [screen, selectedCourse, guesses, scores, currentHole, gameState]);
 
-  // Auto-resume only if the user was actively playing when they left
+  // Auto-resume only if the user was actively playing when they left.
+  // Uses the ref value captured before the saveLastScreen effect runs.
   const [hasAutoResumed, setHasAutoResumed] = useState(false);
   useEffect(() => {
     if (hasAutoResumed) return;
     setHasAutoResumed(true);
-    const lastScreen = loadLastScreen();
     const saved = loadGameState();
-    if (saved && profile.hasSeenWelcome && lastScreen === "playing") {
+    if (saved && profile.hasSeenWelcome && initialLastScreen.current === "playing") {
       resumeRound(saved);
     }
   }, []);
@@ -305,13 +329,16 @@ export default function ForeWords() {
 
   if (screen === "menu") {
     const savedGame = loadGameState();
+    const todaysDailyResult = getTodaysDailyResult(profile);
     return (
       <MenuScreen
         onSelectCourse={() => setScreen("courseSelect")}
         onProfile={() => setScreen("profile")}
         onScoring={() => setScreen("scoring")}
         savedGame={savedGame}
-        onResume={resumeRound}
+        onResume={() => resumeRound()}
+        onDaily={startDaily}
+        todaysDailyResult={todaysDailyResult}
       />
     );
   }
@@ -352,7 +379,8 @@ export default function ForeWords() {
         selectedCourse={selectedCourse}
         displayCourseName={displayCourseName}
         selectedTheme={selectedTheme}
-        onPlayAgain={() => startCourse(selectedCourse, holeCount, selectedTheme, gameMode)}
+        isDaily={isDaily}
+        onPlayAgain={isDaily ? startDaily : () => startCourse(selectedCourse, holeCount, selectedTheme, gameMode)}
         onClubhouse={() => { setScreen("menu"); setSelectedCourse(null); }}
         pendingBadges={pendingBadges}
         onBadgesClaimed={() => setPendingBadges([])}

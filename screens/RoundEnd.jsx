@@ -2,9 +2,10 @@ import { useState } from "react";
 import { getScoreName } from "../gameLogic.js";
 import { THEMES } from "../data/themes.js";
 import { styles, globalStyles } from "../styles.js";
+import { getDailyDisplayDate } from "../data/daily.js";
 import BadgeCelebration from "./BadgeCelebration.jsx";
 
-export default function RoundEnd({ holes, scores, selectedCourse, displayCourseName, selectedTheme, onPlayAgain, onClubhouse, pendingBadges, onBadgesClaimed }) {
+export default function RoundEnd({ holes, scores, selectedCourse, displayCourseName, selectedTheme, isDaily, onPlayAgain, onClubhouse, pendingBadges, onBadgesClaimed }) {
   const [showCelebration, setShowCelebration] = useState((pendingBadges?.length ?? 0) > 0);
   const themeInfo = THEMES.find(t => t.key === selectedTheme);
   const totalPar = holes.reduce((s, h) => s + h.par, 0);
@@ -16,6 +17,11 @@ export default function RoundEnd({ holes, scores, selectedCourse, displayCourseN
     <div style={styles.container}>
       <style>{globalStyles}</style>
       <div style={{ ...styles.menuContent, padding: "24px 16px" }}>
+        {isDaily && (
+          <div style={{ textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: "10px", letterSpacing: "3px", color: "#c9a94e", fontWeight: 600, marginBottom: "6px" }}>
+            DAILY CHALLENGE · {getDailyDisplayDate()}
+          </div>
+        )}
         <h2 style={{ fontFamily: "'Playfair Display', serif", color: "#E8E0D0", fontSize: "28px", textAlign: "center", margin: "0 0 4px 0" }}>
           Round Complete
         </h2>
@@ -23,7 +29,7 @@ export default function RoundEnd({ holes, scores, selectedCourse, displayCourseN
           {diffStr}
         </div>
         <div style={{ textAlign: "center", color: "#8BA89A", fontFamily: "'DM Sans', sans-serif", fontSize: "14px", marginBottom: "24px" }}>
-          {total} strokes · Par {totalPar} · {displayCourseName || selectedCourse}{themeInfo ? ` · ${themeInfo.label}` : ""}
+          {total} strokes · Par {totalPar}{!isDaily && ` · ${displayCourseName || selectedCourse}${themeInfo ? ` · ${themeInfo.label}` : ""}`}
         </div>
 
         {/* Scorecard */}

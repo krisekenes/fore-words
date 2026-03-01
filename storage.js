@@ -38,7 +38,7 @@ export function saveHandicap(handicap) {
   saveProfile(profile);
 }
 
-export function saveRound({ course, scores, holes, theme, gameMode }) {
+export function saveRound({ course, scores, holes, theme, gameMode, isDaily }) {
   const profile = loadProfile();
   const totalPar = holes.reduce((s, h) => s + h.par, 0);
   const totalScore = scores.reduce((s, v) => s + v, 0);
@@ -56,6 +56,7 @@ export function saveRound({ course, scores, holes, theme, gameMode }) {
     theme: theme || "classic",
     gameMode: gameMode || "standard",
     holeCount: holes.length,
+    isDaily: isDaily || false,
   });
 
   // Keep last 50 rounds to avoid bloating localStorage
@@ -125,6 +126,11 @@ export function loadLastScreen() {
   } catch {
     return null;
   }
+}
+
+export function getTodaysDailyResult(profile) {
+  const today = new Date().toISOString().slice(0, 10);
+  return profile.rounds.find(r => r.isDaily && r.date.startsWith(today)) || null;
 }
 
 export function getStats(profile) {

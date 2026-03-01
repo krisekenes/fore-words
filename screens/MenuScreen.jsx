@@ -1,12 +1,22 @@
-import { styles } from "../styles.js";
-import { globalStyles } from "../styles.js";
+import { styles, globalStyles } from "../styles.js";
+import { getDailyDisplayDate, DAILY_PAR } from "../data/daily.js";
 
-export default function MenuScreen({ onSelectCourse, onProfile, onScoring, savedGame, onResume }) {
+function formatVsPar(n) {
+  if (n === 0) return "E";
+  return n > 0 ? `+${n}` : `${n}`;
+}
+
+export default function MenuScreen({ onSelectCourse, onProfile, onScoring, savedGame, onResume, onDaily, todaysDailyResult }) {
+  const dateLabel = getDailyDisplayDate();
+  const dailyPlayed = !!todaysDailyResult;
+  const dailyDiff = dailyPlayed ? todaysDailyResult.vsPar : null;
+  const dailyDiffStr = dailyPlayed ? formatVsPar(dailyDiff) : null;
+
   return (
     <div style={styles.container}>
       <style>{globalStyles}</style>
       <div style={styles.menuContent}>
-        <div style={{ textAlign: "center", marginBottom: "48px" }}>
+        <div style={{ textAlign: "center", marginBottom: "32px" }}>
           <div style={{ fontSize: "14px", letterSpacing: "6px", color: "#8BA89A", fontFamily: "'DM Sans', sans-serif", marginBottom: "8px", fontWeight: 500 }}>
             ⛳ EST. 2025
           </div>
@@ -22,38 +32,98 @@ export default function MenuScreen({ onSelectCourse, onProfile, onScoring, saved
           </p>
         </div>
 
+        {/* Daily Challenge card */}
+        <div
+          onClick={onDaily}
+          style={{
+            background: dailyPlayed
+              ? "rgba(201,169,78,0.06)"
+              : "linear-gradient(135deg, rgba(201,169,78,0.12) 0%, rgba(201,169,78,0.06) 100%)",
+            border: `1px solid ${dailyPlayed ? "rgba(201,169,78,0.2)" : "rgba(201,169,78,0.4)"}`,
+            borderRadius: "12px",
+            padding: "16px 18px",
+            marginBottom: "14px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "14px",
+          }}
+        >
+          <div style={{ flex: 1 }}>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "10px", letterSpacing: "3px", color: "#c9a94e", fontWeight: 600, marginBottom: "3px" }}>
+              DAILY CHALLENGE · {dateLabel}
+            </div>
+            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "17px", color: "#E8E0D0", fontWeight: 600, marginBottom: "2px" }}>
+              {dailyPlayed ? "Round Complete" : "3 Holes · Par 14"}
+            </div>
+            <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "#6a7a6e" }}>
+              {dailyPlayed
+                ? `${todaysDailyResult.totalScore} strokes · Par ${DAILY_PAR}`
+                : "Easy → Medium → Hard"}
+            </div>
+          </div>
+          {dailyPlayed ? (
+            <div style={{ textAlign: "right", minWidth: "44px" }}>
+              <div style={{
+                fontFamily: "'Playfair Display', serif",
+                fontSize: "28px",
+                fontWeight: 700,
+                color: dailyDiff <= 0 ? "#4CAF50" : "#D4956A",
+              }}>
+                {dailyDiffStr}
+              </div>
+              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "9px", letterSpacing: "1.5px", color: "#6a7a6e", marginTop: "1px" }}>
+                PLAY AGAIN
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={e => { e.stopPropagation(); onDaily(); }}
+              style={{
+                ...styles.primaryBtn,
+                padding: "10px 18px",
+                fontSize: "12px",
+                background: "linear-gradient(135deg, #c9a94e, #a8893e)",
+                color: "#141914",
+                flexShrink: 0,
+              }}
+            >
+              PLAY
+            </button>
+          )}
+        </div>
+
+        {/* In-progress round banner */}
         {savedGame && (
           <div style={{
-            background: "rgba(201,169,78,0.08)",
-            border: "1px solid rgba(201,169,78,0.2)",
+            background: "rgba(255,255,255,0.03)",
+            border: "1px solid rgba(255,255,255,0.08)",
             borderRadius: "10px",
-            padding: "14px 16px",
-            marginBottom: "16px",
+            padding: "12px 16px",
+            marginBottom: "14px",
             display: "flex",
             alignItems: "center",
             gap: "12px",
           }}>
             <div style={{ flex: 1 }}>
-              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "#c9a94e", fontWeight: 600, marginBottom: "2px" }}>
+              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "#8BA89A", fontWeight: 600, marginBottom: "2px" }}>
                 Round in progress
               </div>
-              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "#8BA89A" }}>
+              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", color: "#6a7a6e" }}>
                 {savedGame.selectedCourse} · Hole {savedGame.currentHole + 1} of {savedGame.holes.length}
               </div>
             </div>
             <button
               onClick={onResume}
-              style={{ ...styles.primaryBtn, padding: "8px 16px", fontSize: "12px", background: "linear-gradient(135deg, #8a7a30, #6a5a20)" }}
+              style={{ ...styles.primaryBtn, padding: "8px 16px", fontSize: "12px" }}
             >
               RESUME
             </button>
           </div>
         )}
-        <button
-          onClick={onSelectCourse}
-          style={styles.primaryBtn}
-        >
-          {savedGame ? "NEW COURSE" : "SELECT COURSE"}
+
+        <button onClick={onSelectCourse} style={styles.primaryBtn}>
+          SELECT COURSE
         </button>
         <div style={{ display: "flex", gap: "12px", marginTop: "12px" }}>
           <button
