@@ -43,6 +43,12 @@ const HOLE_NAMES = {
     "Last Light", "Golden Hour", "The Closer", "Dusk Drive", "Twilight",
     "Long Shadow", "Afterglow", "The Finisher", "Night Fall", "Final Putt",
   ],
+  "Augusta National": [
+    "Tea Olive", "Pink Dogwood", "Flowering Peach", "Flowering Crab Apple",
+    "Magnolia", "Juniper", "Pampas", "Yellow Jasmine", "Carolina Cherry",
+    "Camellia", "White Dogwood", "Golden Bell", "Azalea", "Chinese Fir",
+    "Firethorn", "Redbud", "Nandina", "Holly",
+  ],
 };
 
 function shuffle(arr) {
@@ -62,6 +68,7 @@ const LENGTH_POOLS = {
   "Morning Tee":    [4, 4, 4, 5, 5, 5, 6, 6, 7],
   "Midday Sprint":  [5, 5, 5, 6, 6, 6, 6, 7, 7],
   "Sunset Dash":    [5, 6, 6, 6, 7, 7, 7, 7, 7],
+  "Augusta National": [5, 5, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7],
 };
 
 // Total par for a course (deterministic, for display on cards)
@@ -103,6 +110,13 @@ export const COURSES = {
   "Royal Dunes": {
     description: "An elite links course — only the brave survive",
     color: "#3d2d1a",
+  },
+};
+
+export const MASTERS_COURSE = {
+  "Augusta National": {
+    description: "18 holes of championship-level word golf",
+    color: "#0a3d1a",
   },
 };
 

@@ -110,7 +110,7 @@ export function getStats(profile) {
   );
 
   const totalAces = rounds.reduce((s, r) => s + (r.aces || 0), 0);
-  const totalHolesPlayed = rounds.length * 9;
+  const totalHolesPlayed = rounds.reduce((s, r) => s + r.scores.length, 0);
 
   let birdieOrBetter = 0;
   for (const round of rounds) {
