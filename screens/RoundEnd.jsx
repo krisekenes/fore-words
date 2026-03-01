@@ -7,11 +7,43 @@ import BadgeCelebration from "./BadgeCelebration.jsx";
 
 export default function RoundEnd({ holes, scores, selectedCourse, displayCourseName, selectedTheme, isDaily, onPlayAgain, onClubhouse, pendingBadges, onBadgesClaimed }) {
   const [showCelebration, setShowCelebration] = useState((pendingBadges?.length ?? 0) > 0);
+  const [copied, setCopied] = useState(false);
   const themeInfo = THEMES.find(t => t.key === selectedTheme);
   const totalPar = holes.reduce((s, h) => s + h.par, 0);
   const total = scores.reduce((s, v) => s + v, 0);
   const diff = total - totalPar;
   const diffStr = diff === 0 ? "E" : diff > 0 ? `+${diff}` : `${diff}`;
+
+  function buildShareText() {
+    const dateLabel = getDailyDisplayDate();
+    const lines = [
+      `⛳ Fore Words · ${dateLabel}`,
+      `${diffStr} (${total} strokes · Par ${totalPar})`,
+      "",
+    ];
+    for (let i = 0; i < holes.length; i++) {
+      const h = holes[i];
+      const s = scores[i];
+      const dot = s < h.par ? "🟢" : s === h.par ? "⚪" : "🔴";
+      const label = getScoreName(s, h.par).name;
+      lines.push(`${dot} ${h.name} (${h.wordLength} letters): ${label} · ${s}`);
+    }
+    lines.push("");
+    lines.push("https://krisekenes.github.io/fore-words/");
+    return lines.join("\n");
+  }
+
+  const handleShare = async () => {
+    const text = buildShareText();
+    if (navigator.share) {
+      try { await navigator.share({ text }); return; } catch { /* cancelled */ }
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch { /* silently ignore */ }
+  };
 
   return (
     <div style={styles.container}>
@@ -83,6 +115,20 @@ export default function RoundEnd({ holes, scores, selectedCourse, displayCourseN
             </tbody>
           </table>
         </div>
+
+        {isDaily && (
+          <button
+            onClick={handleShare}
+            style={{
+              ...styles.primaryBtn,
+              background: "linear-gradient(135deg, #c9a94e, #a8893e)",
+              color: "#141914",
+              marginBottom: "12px",
+            }}
+          >
+            {copied ? "COPIED!" : "SHARE RESULT"}
+          </button>
+        )}
 
         <div style={{ display: "flex", gap: "12px" }}>
           <button onClick={onClubhouse} style={{ ...styles.primaryBtn, flex: 1, background: "rgba(255,255,255,0.08)" }}>
