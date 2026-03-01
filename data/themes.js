@@ -8,6 +8,7 @@ export const THEMES = [
   { key: "arts", label: "Arts", description: "Creative and visual arts" },
   { key: "music", label: "Music", description: "Instruments and melody" },
   { key: "latin", label: "Latin", description: "Words from Latin roots" },
+  { key: "science", label: "Science", description: "Elements and experiments" },
   { key: "movies", label: "Movies", description: "Cinema and film terms" },
   { key: "books", label: "Books", description: "Literature and writing" },
 ];

@@ -62,41 +62,33 @@ export default function CourseSelect({ onBack, onStartCourse }) {
           <div style={{ marginBottom: "20px" }}>
             <div style={{
               display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "8px",
+              gridTemplateColumns: "1fr 1fr 1fr",
+              gap: "6px",
             }}>
-              {THEMES.map((t) => (
-                <button
-                  key={t.key}
-                  onClick={() => setTheme(t.key)}
-                  style={{
-                    padding: "10px 12px",
-                    borderRadius: "8px",
-                    border: theme === t.key ? "1px solid rgba(74,124,89,0.6)" : "1px solid rgba(255,255,255,0.08)",
-                    background: theme === t.key ? "linear-gradient(135deg, #4a7c59, #3a6a49)" : "rgba(255,255,255,0.04)",
-                    cursor: "pointer",
-                    transition: "all 0.2s ease",
-                    textAlign: "left",
-                  }}
-                >
-                  <div style={{
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontSize: "13px",
-                    fontWeight: theme === t.key ? 600 : 500,
-                    color: theme === t.key ? "#E8E0D0" : "#8BA89A",
-                  }}>
+              {THEMES.map((t) => {
+                const isSelected = theme === t.key;
+                return (
+                  <button
+                    key={t.key}
+                    onClick={() => setTheme(t.key)}
+                    style={{
+                      padding: "8px 4px",
+                      borderRadius: "6px",
+                      border: isSelected ? "1px solid rgba(74,124,89,0.6)" : "1px solid rgba(255,255,255,0.08)",
+                      background: isSelected ? "linear-gradient(135deg, #4a7c59, #3a6a49)" : "rgba(255,255,255,0.04)",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "12px",
+                      fontWeight: isSelected ? 600 : 500,
+                      color: isSelected ? "#E8E0D0" : "#8BA89A",
+                      letterSpacing: "0.3px",
+                    }}
+                  >
                     {t.label}
-                  </div>
-                  <div style={{
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontSize: "10px",
-                    color: theme === t.key ? "rgba(232,224,208,0.6)" : "#6a7a6e",
-                    marginTop: "2px",
-                  }}>
-                    {t.description}
-                  </div>
-                </button>
-              ))}
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
