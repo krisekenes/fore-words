@@ -31,6 +31,82 @@ export const HANDICAP_BONUS = (handicap) => {
   return 0;
 };
 
+export const computeHeatmap = (wordLength, guesses) => {
+  if (guesses.length === 0) return null;
+
+  const dict = VALID_GUESSES[wordLength];
+  if (!dict) return null;
+
+  // Build constraints from guesses
+  const correctAt = {};   // position -> letter
+  const presentSet = {};  // letter -> Set of positions where it's NOT
+  const absentSet = new Set(); // letters known to not be in word
+  const knownLetters = new Set(); // letters that are correct or present somewhere
+
+  for (const { word, evaluation } of guesses) {
+    for (let i = 0; i < word.length; i++) {
+      const letter = word[i];
+      const state = evaluation[i];
+      if (state === "correct") {
+        correctAt[i] = letter;
+        knownLetters.add(letter);
+      } else if (state === "present") {
+        if (!presentSet[letter]) presentSet[letter] = new Set();
+        presentSet[letter].add(i);
+        knownLetters.add(letter);
+      } else {
+        // Only mark absent if not also known correct/present
+        if (!knownLetters.has(letter)) {
+          absentSet.add(letter);
+        }
+      }
+    }
+  }
+
+  // Filter remaining words
+  const remaining = [];
+  for (const w of dict) {
+    let valid = true;
+    for (const [pos, letter] of Object.entries(correctAt)) {
+      if (w[Number(pos)] !== letter) { valid = false; break; }
+    }
+    if (!valid) continue;
+    for (const letter of absentSet) {
+      if (w.includes(letter)) { valid = false; break; }
+    }
+    if (!valid) continue;
+    for (const [letter, positions] of Object.entries(presentSet)) {
+      if (!w.includes(letter)) { valid = false; break; }
+      for (const pos of positions) {
+        if (w[pos] === letter) { valid = false; break; }
+      }
+      if (!valid) break;
+    }
+    if (valid) remaining.push(w);
+  }
+
+  if (remaining.length === 0) return null;
+
+  // Count letter frequencies
+  const freq = {};
+  for (let c = 65; c <= 90; c++) freq[String.fromCharCode(c)] = 0;
+  for (const w of remaining) {
+    const seen = new Set();
+    for (const ch of w) {
+      if (!seen.has(ch)) { freq[ch]++; seen.add(ch); }
+    }
+  }
+
+  // Normalize to 0-1
+  const max = Math.max(...Object.values(freq));
+  if (max === 0) return null;
+  const heatmap = {};
+  for (const [letter, count] of Object.entries(freq)) {
+    heatmap[letter] = count / max;
+  }
+  return heatmap;
+};
+
 export const evaluateGuess = (guess, answer) => {
   const result = Array(guess.length).fill("absent");
   const answerChars = [...answer];
