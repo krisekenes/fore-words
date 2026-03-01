@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { COURSES, generateHoles } from "./data/courses.js";
+import { COURSES, generateHoles, getThemedCourse } from "./data/courses.js";
 import { checkWord, pickWord, evaluateGuess, getScoreName, HANDICAP_BONUS, computeHeatmap } from "./gameLogic.js";
 import { loadProfile, saveHandicap, saveRound, markWelcomeSeen, saveGameState, loadGameState, clearGameState } from "./storage.js";
 import MenuScreen from "./screens/MenuScreen.jsx";
@@ -43,6 +43,9 @@ export default function ForeWords() {
   const [holeCount, setHoleCount] = useState(9);
   const [selectedTheme, setSelectedTheme] = useState("classic");
   const [gameMode, setGameMode] = useState("standard");
+
+  const themeKey = gameMode === "experimental" ? "experimental" : selectedTheme !== "classic" ? selectedTheme : null;
+  const displayCourseName = (themeKey && selectedCourse ? getThemedCourse(selectedCourse, themeKey)?.displayName : null) || selectedCourse;
 
   const startCourse = (courseName, holes = 9, theme = "classic", mode = "standard") => {
     clearGameState();
@@ -309,6 +312,7 @@ export default function ForeWords() {
         holes={holes}
         scores={scores}
         selectedCourse={selectedCourse}
+        displayCourseName={displayCourseName}
         selectedTheme={selectedTheme}
         onPlayAgain={() => startCourse(selectedCourse, holeCount, selectedTheme)}
         onClubhouse={() => { setScreen("menu"); setSelectedCourse(null); }}
@@ -329,6 +333,7 @@ export default function ForeWords() {
         scores={scores}
         currentHole={currentHole}
         selectedCourse={selectedCourse}
+        displayCourseName={displayCourseName}
         maxGuesses={maxGuesses}
         shakeRow={shakeRow}
         revealRow={revealRow}

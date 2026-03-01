@@ -3,7 +3,7 @@ import { THEMES } from "../data/themes.js";
 import { styles } from "../styles.js";
 import { globalStyles } from "../styles.js";
 
-export default function RoundEnd({ holes, scores, selectedCourse, selectedTheme, onPlayAgain, onClubhouse }) {
+export default function RoundEnd({ holes, scores, selectedCourse, displayCourseName, selectedTheme, onPlayAgain, onClubhouse }) {
   const themeInfo = THEMES.find(t => t.key === selectedTheme);
   const totalPar = holes.reduce((s, h) => s + h.par, 0);
   const total = scores.reduce((s, v) => s + v, 0);
@@ -21,7 +21,7 @@ export default function RoundEnd({ holes, scores, selectedCourse, selectedTheme,
           {diffStr}
         </div>
         <div style={{ textAlign: "center", color: "#8BA89A", fontFamily: "'DM Sans', sans-serif", fontSize: "14px", marginBottom: "24px" }}>
-          {total} strokes · Par {totalPar} · {selectedCourse}{themeInfo ? ` · ${themeInfo.label}` : ""}
+          {total} strokes · Par {totalPar} · {displayCourseName || selectedCourse}{themeInfo ? ` · ${themeInfo.label}` : ""}
         </div>
 
         {/* Scorecard */}
