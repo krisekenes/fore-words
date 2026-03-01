@@ -329,10 +329,10 @@ export default function PlayingScreen({
             maxWidth: "300px",
           }}>
             <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "20px", color: "#E8E0D0", marginBottom: "8px", fontWeight: 600 }}>
-              Quit Round?
+              Take a Break?
             </div>
             <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", color: "#8BA89A", marginBottom: "24px", lineHeight: 1.5 }}>
-              Your progress on this round will be lost.
+              Your round will be saved. You can resume from the menu.
             </div>
             <div style={{ display: "flex", gap: "12px" }}>
               <button
@@ -343,9 +343,9 @@ export default function PlayingScreen({
               </button>
               <button
                 onClick={onQuit}
-                style={{ ...styles.primaryBtn, flex: 1, background: "linear-gradient(135deg, #8B3A3A, #6B2A2A)", fontSize: "13px", padding: "10px" }}
+                style={{ ...styles.primaryBtn, flex: 1, fontSize: "13px", padding: "10px" }}
               >
-                QUIT
+                SAVE & QUIT
               </button>
             </div>
           </div>
