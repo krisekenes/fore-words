@@ -305,7 +305,7 @@ export default function PlayingScreen({
       </div>
 
       {/* Mini Scorecard */}
-      <div style={{ display: "flex", justifyContent: "center", gap: "2px", padding: "0 8px 10px" }}>
+      <div style={{ display: "flex", justifyContent: "center", gap: "2px", padding: "0 8px 16px" }}>
         {holes.map((h, i) => {
           const s = scores[i];
           const isCurrent = i === currentHole;

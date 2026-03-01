@@ -9,6 +9,7 @@ export const styles = {
     position: "relative",
     fontFamily: "'DM Sans', sans-serif",
     overflow: "hidden",
+    paddingBottom: "env(safe-area-inset-bottom, 0px)",
   },
   menuContent: {
     flex: 1,
