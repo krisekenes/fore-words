@@ -31,11 +31,13 @@ styles.js              # Shared inline styles object + globalStyles CSS string (
 main.jsx               # Vite entry point
 
 screens/
-  MenuScreen.jsx       # Title, handicap selector, "Select Course" + "My Profile" buttons
+  MenuScreen.jsx       # Title, "Select Course" + "My Profile" buttons, resume saved game
+  WelcomeScreen.jsx    # First-time player onboarding with handicap selection
   CourseSelect.jsx     # 3 course cards with metadata (par, holes, letter range)
   PlayingScreen.jsx    # Active gameplay: grid, keyboard, mini scorecard, overlays
   RoundEnd.jsx         # Final scorecard table with color-coded scores
   ProfileScreen.jsx    # Player stats (rounds, avg vs par, best, aces) + recent rounds
+  ScoringScreen.jsx    # Scoring reference guide
 
 data/
   courses.js           # PAR_BY_LENGTH, LENGTH_POOLS, HOLE_NAMES, generateHoles(), COURSES
@@ -54,8 +56,8 @@ State lives in `ForeWords.jsx`. Screen rendered based on `screen` state variable
 
 ## Scoring System
 
-- **Par per word length** (`data/courses.js:PAR_BY_LENGTH`): linear scale, `par = wordLength - 1`
-  - 4 letters → Par 3
+- **Par per word length** (`data/courses.js:PAR_BY_LENGTH`):
+  - 4 letters → Par 4
   - 5 letters → Par 4
   - 6 letters → Par 5
   - 7 letters → Par 6
@@ -68,7 +70,7 @@ State lives in `ForeWords.jsx`. Screen rendered based on `screen` state variable
 
 | Course | Difficulty | Word Lengths | ~Par |
 |--------|-----------|-------------|------|
-| The Links | Beginner | 4,4,4,5,5,5,6,6,7 | 37 |
+| The Links | Beginner | 4,4,4,5,5,5,6,6,7 | 40 |
 | Pine Valley | Intermediate | 5,5,5,6,6,6,6,7,7 | 44 |
 | Royal Dunes | Expert | 5,6,6,6,7,7,7,7,7 | 49 |
 

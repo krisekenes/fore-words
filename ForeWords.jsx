@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { COURSES, generateHoles, getThemedCourse } from "./data/courses.js";
 import { checkWord, pickWord, evaluateGuess, getScoreName, HANDICAP_BONUS, computeHeatmap } from "./gameLogic.js";
 import { loadProfile, saveHandicap, saveRound, markWelcomeSeen, saveGameState, loadGameState, clearGameState } from "./storage.js";
@@ -27,11 +27,8 @@ export default function ForeWords() {
   const [revealRow, setRevealRow] = useState(-1);
   const [letterStates, setLetterStates] = useState({});
   const [holeMessage, setHoleMessage] = useState(null);
-  const [animatingScore, setAnimatingScore] = useState(false);
   const [revealedTiles, setRevealedTiles] = useState(new Set());
   const [toastMessage, setToastMessage] = useState(null);
-  const inputRef = useRef(null);
-
   const course = selectedCourse ? COURSES[selectedCourse] : null;
   const hole = holes[currentHole] || null;
 
@@ -144,8 +141,6 @@ export default function ForeWords() {
         const score = newGuesses.length;
         const scoreInfo = getScoreName(score, hole.par);
         setHoleMessage(scoreInfo);
-        setAnimatingScore(true);
-        setTimeout(() => setAnimatingScore(false), 1000);
       }, finishDelay);
     } else if (newGuesses.length >= maxGuesses) {
       const finishDelay = (guess.length - 1) * 300 + 800;
@@ -154,8 +149,6 @@ export default function ForeWords() {
         const score = maxGuesses + 1;
         const scoreInfo = getScoreName(score, hole.par);
         setHoleMessage({ ...scoreInfo, name: `${scoreInfo.name} (${answer})`, color: "#8B0000" });
-        setAnimatingScore(true);
-        setTimeout(() => setAnimatingScore(false), 1000);
       }, finishDelay);
     }
   }, [currentGuess, guesses, answer, gameState, hole, maxGuesses, showToast]);
@@ -222,9 +215,19 @@ export default function ForeWords() {
     setGuesses(state.guesses);
     setCurrentGuess("");
     setMaxGuesses(state.maxGuesses);
-    setGameState("playing");
+    const restoredState = state.gameState === "won" || state.gameState === "lost" ? state.gameState : "playing";
+    setGameState(restoredState);
     setRevealRow(-1);
-    setHoleMessage(null);
+    if (restoredState === "won") {
+      const scoreInfo = getScoreName(state.guesses.length, state.holes[state.currentHole].par);
+      setHoleMessage(scoreInfo);
+    } else if (restoredState === "lost") {
+      const score = state.maxGuesses + 1;
+      const scoreInfo = getScoreName(score, state.holes[state.currentHole].par);
+      setHoleMessage({ ...scoreInfo, name: `${scoreInfo.name} (${state.answer})`, color: "#8B0000" });
+    } else {
+      setHoleMessage(null);
+    }
     setLetterStates(state.letterStates || {});
 
     // Mark all previous guesses as revealed
@@ -244,9 +247,9 @@ export default function ForeWords() {
     if (screen !== "playing" || !selectedCourse) return;
     saveGameState({
       selectedCourse, selectedTheme, gameMode, holeCount,
-      holes, scores, currentHole, answer, guesses, maxGuesses, letterStates,
+      holes, scores, currentHole, answer, guesses, maxGuesses, letterStates, gameState,
     });
-  }, [screen, selectedCourse, guesses, scores, currentHole]);
+  }, [screen, selectedCourse, guesses, scores, currentHole, gameState]);
 
   // Auto-resume on initial load if there's a saved game
   const [hasAutoResumed, setHasAutoResumed] = useState(false);
@@ -321,7 +324,7 @@ export default function ForeWords() {
         selectedCourse={selectedCourse}
         displayCourseName={displayCourseName}
         selectedTheme={selectedTheme}
-        onPlayAgain={() => startCourse(selectedCourse, holeCount, selectedTheme)}
+        onPlayAgain={() => startCourse(selectedCourse, holeCount, selectedTheme, gameMode)}
         onClubhouse={() => { setScreen("menu"); setSelectedCourse(null); }}
       />
     );

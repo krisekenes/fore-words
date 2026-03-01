@@ -75,7 +75,13 @@ export function saveGameState(state) {
 export function loadGameState() {
   try {
     const raw = localStorage.getItem(GAME_STATE_KEY);
-    return raw ? JSON.parse(raw) : null;
+    if (!raw) return null;
+    const state = JSON.parse(raw);
+    // Validate required fields exist
+    if (!state.selectedCourse || !Array.isArray(state.holes) || !Array.isArray(state.guesses) || !state.answer) {
+      return null;
+    }
+    return state;
   } catch {
     return null;
   }

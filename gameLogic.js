@@ -77,6 +77,12 @@ export const computeHeatmap = (wordLength, guesses) => {
     }
   }
 
+  // Remove letters from absentSet that turned out to be correct/present
+  // (handles duplicate letters: e.g., guessing "LLAMA" when answer has one L)
+  for (const letter of knownLetters) {
+    absentSet.delete(letter);
+  }
+
   // Filter remaining words
   const remaining = [];
   for (const w of dict) {

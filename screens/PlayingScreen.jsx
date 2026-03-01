@@ -291,35 +291,41 @@ export default function PlayingScreen({
       </div>
 
       {/* Mini Scorecard */}
-      <div style={{ display: "flex", justifyContent: "center", gap: "2px", padding: "0 8px 16px" }}>
-        {holes.map((h, i) => {
-          const s = scores[i];
-          const isCurrent = i === currentHole;
-          const currentHoleScore = isCurrent && gameState === "won" ? guesses.length
-            : isCurrent && gameState === "lost" ? maxGuesses + 1
-            : undefined;
-          const displayScore = s !== undefined ? s : currentHoleScore;
-          const info = displayScore !== undefined ? getScoreName(displayScore, h.par) : null;
-          return (
-            <div key={i} style={{
-              width: "28px",
-              height: "28px",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "11px",
-              fontWeight: 600,
-              fontFamily: "'DM Sans', sans-serif",
-              background: isCurrent ? "rgba(201,169,78,0.15)" : displayScore !== undefined ? "rgba(255,255,255,0.05)" : "transparent",
-              border: isCurrent ? "1.5px solid #c9a94e" : "1px solid rgba(255,255,255,0.06)",
-              color: info ? info.color : isCurrent ? "#c9a94e" : "#3a4a3e",
-            }}>
-              {displayScore !== undefined ? displayScore : i + 1}
-            </div>
-          );
-        })}
-      </div>
+      {(() => {
+        const dotSize = holes.length > 9 ? 22 : 28;
+        const dotFont = holes.length > 9 ? "9px" : "11px";
+        return (
+          <div style={{ display: "flex", justifyContent: "center", gap: "2px", padding: "0 8px 16px", flexWrap: "wrap" }}>
+            {holes.map((h, i) => {
+              const s = scores[i];
+              const isCurrent = i === currentHole;
+              const currentHoleScore = isCurrent && gameState === "won" ? guesses.length
+                : isCurrent && gameState === "lost" ? maxGuesses + 1
+                : undefined;
+              const displayScore = s !== undefined ? s : currentHoleScore;
+              const info = displayScore !== undefined ? getScoreName(displayScore, h.par) : null;
+              return (
+                <div key={i} style={{
+                  width: `${dotSize}px`,
+                  height: `${dotSize}px`,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: dotFont,
+                  fontWeight: 600,
+                  fontFamily: "'DM Sans', sans-serif",
+                  background: isCurrent ? "rgba(201,169,78,0.15)" : displayScore !== undefined ? "rgba(255,255,255,0.05)" : "transparent",
+                  border: isCurrent ? "1.5px solid #c9a94e" : "1px solid rgba(255,255,255,0.06)",
+                  color: info ? info.color : isCurrent ? "#c9a94e" : "#3a4a3e",
+                }}>
+                  {displayScore !== undefined ? displayScore : i + 1}
+                </div>
+              );
+            })}
+          </div>
+        );
+      })()}
 
       {/* Quit Confirmation */}
       {showQuitConfirm && (
