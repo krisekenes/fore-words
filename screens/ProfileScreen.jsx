@@ -1,4 +1,5 @@
 import { getStats } from "../storage.js";
+import { HANDICAP_BONUS } from "../gameLogic.js";
 import { styles } from "../styles.js";
 import { globalStyles } from "../styles.js";
 
@@ -12,7 +13,7 @@ function formatDate(iso) {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-export default function ProfileScreen({ profile, onBack }) {
+export default function ProfileScreen({ profile, handicap, setHandicap, onBack }) {
   const stats = getStats(profile);
   const recentRounds = [...(profile.rounds || [])].reverse().slice(0, 10);
 
@@ -22,11 +23,31 @@ export default function ProfileScreen({ profile, onBack }) {
       <div style={{ ...styles.menuContent, padding: "24px 20px" }}>
         <button onClick={onBack} style={styles.backBtn}>← Back</button>
 
-        <h2 style={{ fontFamily: "'Playfair Display', serif", color: "#E8E0D0", fontSize: "28px", textAlign: "center", margin: "0 0 4px 0" }}>
+        <h2 style={{ fontFamily: "'Playfair Display', serif", color: "#E8E0D0", fontSize: "28px", textAlign: "center", margin: "0 0 20px 0" }}>
           Player Profile
         </h2>
-        <div style={{ textAlign: "center", color: "#8BA89A", fontFamily: "'DM Sans', sans-serif", fontSize: "13px", marginBottom: "28px" }}>
-          Handicap {profile.handicap}
+
+        {/* Handicap Picker */}
+        <div style={{
+          background: "rgba(255,255,255,0.03)",
+          borderRadius: "10px",
+          border: "1px solid rgba(255,255,255,0.06)",
+          padding: "16px",
+          marginBottom: "28px",
+        }}>
+          <label style={{ display: "block", color: "#8BA89A", fontSize: "10px", letterSpacing: "3px", fontFamily: "'DM Sans', sans-serif", marginBottom: "10px", textAlign: "center", fontWeight: 500 }}>
+            YOUR HANDICAP
+          </label>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "20px" }}>
+            <button onClick={() => setHandicap(Math.max(0, handicap - 1))} style={styles.handicapBtn}>−</button>
+            <div style={{ fontSize: "32px", fontFamily: "'Playfair Display', serif", color: "#E8E0D0", width: "50px", textAlign: "center", fontWeight: 700 }}>
+              {handicap}
+            </div>
+            <button onClick={() => setHandicap(Math.min(30, handicap + 1))} style={styles.handicapBtn}>+</button>
+          </div>
+          <div style={{ textAlign: "center", color: "#6a7a6e", fontSize: "11px", fontFamily: "'DM Sans', sans-serif", marginTop: "6px" }}>
+            +{HANDICAP_BONUS(handicap)} bonus {HANDICAP_BONUS(handicap) === 1 ? "guess" : "guesses"} per hole
+          </div>
         </div>
 
         {/* Stats Grid */}

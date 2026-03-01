@@ -262,14 +262,11 @@ export default function ForeWords() {
     const savedGame = loadGameState();
     return (
       <MenuScreen
-        handicap={handicap}
-        setHandicap={updateHandicap}
         onSelectCourse={() => setScreen("courseSelect")}
         onProfile={() => setScreen("profile")}
         onScoring={() => setScreen("scoring")}
         savedGame={savedGame}
         onResume={resumeRound}
-        onDiscardSave={clearGameState}
       />
     );
   }
@@ -278,6 +275,8 @@ export default function ForeWords() {
     return (
       <ProfileScreen
         profile={profile}
+        handicap={handicap}
+        setHandicap={updateHandicap}
         onBack={() => setScreen("menu")}
       />
     );

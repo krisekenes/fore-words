@@ -1,8 +1,7 @@
-import { HANDICAP_BONUS } from "../gameLogic.js";
 import { styles } from "../styles.js";
 import { globalStyles } from "../styles.js";
 
-export default function MenuScreen({ handicap, setHandicap, onSelectCourse, onProfile, onScoring, savedGame, onResume, onDiscardSave }) {
+export default function MenuScreen({ onSelectCourse, onProfile, onScoring, savedGame, onResume }) {
   return (
     <div style={styles.container}>
       <style>{globalStyles}</style>
@@ -21,22 +20,6 @@ export default function MenuScreen({ handicap, setHandicap, onSelectCourse, onPr
           <p style={{ color: "#8BA89A", fontSize: "14px", fontFamily: "'DM Sans', sans-serif", lineHeight: 1.6, maxWidth: "320px", margin: "0 auto" }}>
             Guess the word in as few tries as possible. Each hole changes the word length and difficulty. Play under par to climb the leaderboard.
           </p>
-        </div>
-
-        <div style={{ marginBottom: "32px" }}>
-          <label style={{ display: "block", color: "#8BA89A", fontSize: "11px", letterSpacing: "3px", fontFamily: "'DM Sans', sans-serif", marginBottom: "12px", textAlign: "center", fontWeight: 500 }}>
-            YOUR HANDICAP
-          </label>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "20px" }}>
-            <button onClick={() => setHandicap(Math.max(0, handicap - 1))} style={styles.handicapBtn}>−</button>
-            <div style={{ fontSize: "36px", fontFamily: "'Playfair Display', serif", color: "#E8E0D0", width: "60px", textAlign: "center", fontWeight: 700 }}>
-              {handicap}
-            </div>
-            <button onClick={() => setHandicap(Math.min(30, handicap + 1))} style={styles.handicapBtn}>+</button>
-          </div>
-          <div style={{ textAlign: "center", color: "#6a7a6e", fontSize: "12px", fontFamily: "'DM Sans', sans-serif", marginTop: "8px" }}>
-            +{HANDICAP_BONUS(handicap)} bonus {HANDICAP_BONUS(handicap) === 1 ? "guess" : "guesses"} per hole
-          </div>
         </div>
 
         {savedGame && (
