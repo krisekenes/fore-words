@@ -5,26 +5,13 @@ import { styles } from "../styles.js";
 import { globalStyles } from "../styles.js";
 
 const heatmapColor = (value) => {
-  if (value <= 0) return "rgba(255,255,255,0.08)";
-  if (value <= 0.3) {
-    const t = value / 0.3;
-    const r = Math.round(255 + (40 - 255) * t);
-    const g = Math.round(255 + (160 - 255) * t);
-    const b = Math.round(255 + (80 - 255) * t);
-    const a = 0.1 + (0.35 - 0.1) * t;
-    return `rgba(${r},${g},${b},${a.toFixed(2)})`;
-  }
-  if (value <= 0.6) {
-    const t = (value - 0.3) / 0.3;
-    const a = 0.35 + (0.65 - 0.35) * t;
-    return `rgba(40,160,80,${a.toFixed(2)})`;
-  }
-  const t = (value - 0.6) / 0.4;
-  const r = Math.round(40 + (220 - 40) * t);
-  const g = Math.round(160 + (180 - 160) * t);
-  const b = Math.round(80 + (50 - 80) * t);
-  const a = 0.65 + (0.9 - 0.65) * t;
-  return `rgba(${r},${g},${b},${a.toFixed(2)})`;
+  if (value <= 0) return "hsla(0,0%,100%,0.08)";
+  // Interpolate: green (h140,s60%,l40%) → gold (h47,s75%,l53%)
+  const h = Math.round(140 + (47 - 140) * value);
+  const s = Math.round(60 + (75 - 60) * value);
+  const l = Math.round(40 + (53 - 40) * value);
+  const a = 0.1 + (0.9 - 0.1) * value;
+  return `hsla(${h},${s}%,${l}%,${a.toFixed(2)})`;
 };
 
 export default function PlayingScreen({
