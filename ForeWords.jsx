@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { COURSES, generateHoles, getThemedCourse } from "./data/courses.js";
 import { checkWord, pickWord, evaluateGuess, getScoreName, HANDICAP_BONUS, computeHeatmap } from "./gameLogic.js";
-import { loadProfile, saveHandicap, saveRound, markWelcomeSeen, saveGameState, loadGameState, clearGameState } from "./storage.js";
+import { loadProfile, saveHandicap, saveRound, saveBadges, markWelcomeSeen, saveGameState, loadGameState, clearGameState } from "./storage.js";
+import { BADGES } from "./data/badges.js";
 import MenuScreen from "./screens/MenuScreen.jsx";
 import CourseSelect from "./screens/CourseSelect.jsx";
 import PlayingScreen from "./screens/PlayingScreen.jsx";
@@ -36,6 +37,8 @@ export default function ForeWords() {
     setHandicap(value);
     saveHandicap(value);
   };
+
+  const [pendingBadges, setPendingBadges] = useState([]);
 
   const [holeCount, setHoleCount] = useState(9);
   const [selectedTheme, setSelectedTheme] = useState("classic");
@@ -188,7 +191,26 @@ export default function ForeWords() {
       startHole(holes[nextHole], selectedTheme);
     } else {
       clearGameState();
-      saveRound({ course: selectedCourse, scores: newScores, holes });
+      saveRound({ course: selectedCourse, scores: newScores, holes, theme: selectedTheme, gameMode });
+
+      const freshProfile = loadProfile();
+      const roundResult = {
+        course: selectedCourse,
+        scores: newScores,
+        holes,
+        totalScore: newScores.reduce((s, v) => s + v, 0),
+        totalPar: holes.reduce((s, h) => s + h.par, 0),
+        vsPar: newScores.reduce((s, v) => s + v, 0) - holes.reduce((s, h) => s + h.par, 0),
+        aces: newScores.filter(s => s === 1).length,
+        holeCount: holes.length,
+        theme: selectedTheme,
+        gameMode,
+      };
+      const alreadyEarned = new Set(freshProfile.badges.map(b => b.id));
+      const newlyEarned = BADGES.filter(b => !alreadyEarned.has(b.id) && b.check(roundResult, freshProfile));
+      if (newlyEarned.length > 0) saveBadges(newlyEarned.map(b => b.id));
+      setPendingBadges(newlyEarned);
+
       setProfile(loadProfile());
       setScreen("roundEnd");
     }
@@ -326,6 +348,8 @@ export default function ForeWords() {
         selectedTheme={selectedTheme}
         onPlayAgain={() => startCourse(selectedCourse, holeCount, selectedTheme, gameMode)}
         onClubhouse={() => { setScreen("menu"); setSelectedCourse(null); }}
+        pendingBadges={pendingBadges}
+        onBadgesClaimed={() => setPendingBadges([])}
       />
     );
   }

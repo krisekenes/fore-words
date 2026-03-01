@@ -1,7 +1,7 @@
 import { getStats } from "../storage.js";
 import { HANDICAP_BONUS } from "../gameLogic.js";
-import { styles } from "../styles.js";
-import { globalStyles } from "../styles.js";
+import { styles, globalStyles } from "../styles.js";
+import TrophyCabinet from "./TrophyCabinet.jsx";
 
 function formatVsPar(n) {
   if (n === 0) return "E";
@@ -69,7 +69,7 @@ export default function ProfileScreen({ profile, handicap, setHandicap, onBack }
         </div>
 
         {/* Recent Rounds */}
-        <div style={{ marginBottom: "8px" }}>
+        <div style={{ marginBottom: "32px" }}>
           <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", letterSpacing: "3px", color: "#6a7a6e", marginBottom: "12px", fontWeight: 500 }}>
             RECENT ROUNDS
           </div>
@@ -116,6 +116,14 @@ export default function ProfileScreen({ profile, handicap, setHandicap, onBack }
               })}
             </div>
           )}
+        </div>
+
+        {/* Trophy Cabinet */}
+        <div style={{ marginTop: "32px", marginBottom: "8px" }}>
+          <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", letterSpacing: "3px", color: "#6a7a6e", marginBottom: "14px", fontWeight: 500 }}>
+            TROPHY CABINET
+          </div>
+          <TrophyCabinet profile={profile} />
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ const DEFAULT_PROFILE = {
   handicap: 10,
   rounds: [],
   hasSeenWelcome: false,
+  badges: [],
 };
 
 export function loadProfile() {
@@ -37,7 +38,7 @@ export function saveHandicap(handicap) {
   saveProfile(profile);
 }
 
-export function saveRound({ course, scores, holes }) {
+export function saveRound({ course, scores, holes, theme, gameMode }) {
   const profile = loadProfile();
   const totalPar = holes.reduce((s, h) => s + h.par, 0);
   const totalScore = scores.reduce((s, v) => s + v, 0);
@@ -52,6 +53,9 @@ export function saveRound({ course, scores, holes }) {
     scores: [...scores],
     holes: holes.map((h) => ({ par: h.par, wordLength: h.wordLength })),
     aces,
+    theme: theme || "classic",
+    gameMode: gameMode || "standard",
+    holeCount: holes.length,
   });
 
   // Keep last 50 rounds to avoid bloating localStorage
@@ -59,6 +63,16 @@ export function saveRound({ course, scores, holes }) {
     profile.rounds = profile.rounds.slice(-50);
   }
 
+  saveProfile(profile);
+}
+
+export function saveBadges(newBadgeIds) {
+  const profile = loadProfile();
+  const now = new Date().toISOString();
+  const existingIds = new Set(profile.badges.map(b => b.id));
+  for (const id of newBadgeIds) {
+    if (!existingIds.has(id)) profile.badges.push({ id, earnedAt: now });
+  }
   saveProfile(profile);
 }
 

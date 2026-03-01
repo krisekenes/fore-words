@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { getScoreName } from "../gameLogic.js";
 import { THEMES } from "../data/themes.js";
-import { styles } from "../styles.js";
-import { globalStyles } from "../styles.js";
+import { styles, globalStyles } from "../styles.js";
+import BadgeCelebration from "./BadgeCelebration.jsx";
 
-export default function RoundEnd({ holes, scores, selectedCourse, displayCourseName, selectedTheme, onPlayAgain, onClubhouse }) {
+export default function RoundEnd({ holes, scores, selectedCourse, displayCourseName, selectedTheme, onPlayAgain, onClubhouse, pendingBadges, onBadgesClaimed }) {
+  const [showCelebration, setShowCelebration] = useState((pendingBadges?.length ?? 0) > 0);
   const themeInfo = THEMES.find(t => t.key === selectedTheme);
   const totalPar = holes.reduce((s, h) => s + h.par, 0);
   const total = scores.reduce((s, v) => s + v, 0);
@@ -85,6 +87,13 @@ export default function RoundEnd({ holes, scores, selectedCourse, displayCourseN
           </button>
         </div>
       </div>
+
+      {showCelebration && pendingBadges?.length > 0 && (
+        <BadgeCelebration
+          badges={pendingBadges}
+          onAllClaimed={() => { setShowCelebration(false); onBadgesClaimed(); }}
+        />
+      )}
     </div>
   );
 }
