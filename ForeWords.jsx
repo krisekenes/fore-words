@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { COURSES, generateHoles } from "./data/courses.js";
-import { checkWord, pickWord, evaluateGuess, getScoreName, HANDICAP_BONUS } from "./gameLogic.js";
+import { checkWord, pickWord, evaluateGuess, getScoreName, HANDICAP_BONUS, computeHeatmap } from "./gameLogic.js";
 import { loadProfile, saveHandicap, saveRound, markWelcomeSeen, saveGameState, loadGameState, clearGameState } from "./storage.js";
 import MenuScreen from "./screens/MenuScreen.jsx";
 import CourseSelect from "./screens/CourseSelect.jsx";
@@ -42,13 +42,15 @@ export default function ForeWords() {
 
   const [holeCount, setHoleCount] = useState(9);
   const [selectedTheme, setSelectedTheme] = useState("classic");
+  const [gameMode, setGameMode] = useState("standard");
 
-  const startCourse = (courseName, holes = 9, theme = "classic") => {
+  const startCourse = (courseName, holes = 9, theme = "classic", mode = "standard") => {
     clearGameState();
     const generated = generateHoles(courseName, holes);
     setSelectedCourse(courseName);
     setHoleCount(holes);
     setSelectedTheme(theme);
+    setGameMode(mode);
     setHoles(generated);
     setScores([]);
     setCurrentHole(0);
@@ -200,6 +202,7 @@ export default function ForeWords() {
     saveGameState({
       selectedCourse,
       selectedTheme,
+      gameMode,
       holeCount,
       holes,
       scores,
@@ -219,6 +222,7 @@ export default function ForeWords() {
 
     setSelectedCourse(saved.selectedCourse);
     setSelectedTheme(saved.selectedTheme);
+    setGameMode(saved.gameMode || "standard");
     setHoleCount(saved.holeCount);
     setHoles(saved.holes);
     setScores(saved.scores);
@@ -313,6 +317,7 @@ export default function ForeWords() {
   }
 
   if (screen === "playing" && hole) {
+    const heatmap = gameMode === "experimental" ? computeHeatmap(hole.wordLength, guesses) : null;
     return (
       <PlayingScreen
         guesses={guesses}
@@ -331,6 +336,7 @@ export default function ForeWords() {
         holeMessage={holeMessage}
         revealedTiles={revealedTiles}
         toastMessage={toastMessage}
+        heatmap={heatmap}
         onKey={handleKey}
         onAdvanceHole={advanceHole}
         onQuit={quitRound}

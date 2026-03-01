@@ -9,6 +9,7 @@ const MODES = [
   { key: "full", label: "FULL", holes: 9 },
   { key: "themed", label: "THEMED", holes: 9 },
   { key: "masters", label: "MASTERS", holes: 18 },
+  { key: "experimental", label: "LABS", holes: 9 },
 ];
 
 export default function CourseSelect({ onBack, onStartCourse }) {
@@ -17,6 +18,7 @@ export default function CourseSelect({ onBack, onStartCourse }) {
   const modeInfo = MODES.find(m => m.key === mode);
   const holeCount = modeInfo.holes;
   const activeTheme = mode === "themed" ? theme : "classic";
+  const gameMode = mode === "experimental" ? "experimental" : "standard";
   const activeCourses = mode === "masters" ? MASTERS_COURSE : mode === "quick" ? QUICK_COURSES : COURSES;
 
   return (
@@ -101,7 +103,7 @@ export default function CourseSelect({ onBack, onStartCourse }) {
             return (
               <button
                 key={name}
-                onClick={() => onStartCourse(name, holeCount, activeTheme)}
+                onClick={() => onStartCourse(name, holeCount, activeTheme, gameMode)}
                 style={{
                   background: `linear-gradient(135deg, ${c.color}cc, ${c.color}88)`,
                   border: "1px solid rgba(255,255,255,0.08)",

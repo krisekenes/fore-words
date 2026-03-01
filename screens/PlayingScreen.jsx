@@ -4,6 +4,29 @@ import { getScoreName } from "../gameLogic.js";
 import { styles } from "../styles.js";
 import { globalStyles } from "../styles.js";
 
+const heatmapColor = (value) => {
+  if (value <= 0) return "rgba(255,255,255,0.08)";
+  if (value <= 0.3) {
+    const t = value / 0.3;
+    const r = Math.round(255 + (74 - 255) * t);
+    const g = Math.round(255 + (124 - 255) * t);
+    const b = Math.round(255 + (89 - 255) * t);
+    const a = 0.08 + (0.3 - 0.08) * t;
+    return `rgba(${r},${g},${b},${a.toFixed(2)})`;
+  }
+  if (value <= 0.6) {
+    const t = (value - 0.3) / 0.3;
+    const a = 0.3 + (0.6 - 0.3) * t;
+    return `rgba(74,124,89,${a.toFixed(2)})`;
+  }
+  const t = (value - 0.6) / 0.4;
+  const r = Math.round(74 + (201 - 74) * t);
+  const g = Math.round(124 + (169 - 124) * t);
+  const b = Math.round(89 + (78 - 89) * t);
+  const a = 0.6 + (0.7 - 0.6) * t;
+  return `rgba(${r},${g},${b},${a.toFixed(2)})`;
+};
+
 export default function PlayingScreen({
   guesses,
   currentGuess,
@@ -21,6 +44,7 @@ export default function PlayingScreen({
   holeMessage,
   revealedTiles,
   toastMessage,
+  heatmap,
   onKey,
   onAdvanceHole,
   onQuit,
@@ -91,9 +115,11 @@ export default function PlayingScreen({
             const isAbsent = state === "absent";
             const isCorrect = state === "correct";
             const isPresent = state === "present";
+            const heatVal = heatmap && !state ? heatmap[key] : null;
             const bg = isCorrect ? TILE_COLORS.correct
               : isPresent ? TILE_COLORS.present
               : isAbsent ? "rgba(255,255,255,0.03)"
+              : heatVal != null ? heatmapColor(heatVal)
               : "rgba(255,255,255,0.15)";
             const textColor = isAbsent ? "rgba(255,255,255,0.18)" : "#fff";
             const isWide = key === "ENTER" || key === "⌫";
