@@ -31,6 +31,20 @@ export const HANDICAP_BONUS = (handicap) => {
   return 0;
 };
 
+// Keyboard adjacency for spatial blending (includes diagonals across rows)
+const KEYBOARD_NEIGHBORS = {
+  Q: ["W","A","S"],             W: ["Q","E","A","S","D"],       E: ["W","R","S","D","F"],
+  R: ["E","T","D","F","G"],     T: ["R","Y","F","G","H"],       Y: ["T","U","G","H","J"],
+  U: ["Y","I","H","J","K"],     I: ["U","O","J","K","L"],       O: ["I","P","K","L"],
+  P: ["O","L"],
+  A: ["Q","W","S","Z","X"],     S: ["Q","W","E","A","D","Z","X","C"], D: ["W","E","R","S","F","X","C","V"],
+  F: ["E","R","T","D","G","C","V","B"], G: ["R","T","Y","F","H","V","B","N"], H: ["T","Y","U","G","J","B","N","M"],
+  J: ["Y","U","I","H","K","N","M"], K: ["U","I","O","J","L","M"], L: ["I","O","P","K"],
+  Z: ["A","S","X"],             X: ["A","S","D","Z","C"],       C: ["S","D","F","X","V"],
+  V: ["D","F","G","C","B"],     B: ["F","G","H","V","N"],       N: ["G","H","J","B","M"],
+  M: ["H","J","K","N"],
+};
+
 export const computeHeatmap = (wordLength, guesses) => {
   if (guesses.length === 0) return null;
 
@@ -100,9 +114,28 @@ export const computeHeatmap = (wordLength, guesses) => {
   // Normalize to 0-1
   const max = Math.max(...Object.values(freq));
   if (max === 0) return null;
-  const heatmap = {};
+  const raw = {};
   for (const [letter, count] of Object.entries(freq)) {
-    heatmap[letter] = count / max;
+    raw[letter] = count / max;
+  }
+
+  // Spatial blending: smooth values across keyboard neighbors
+  const SELF_WEIGHT = 0.6;
+  const blended = {};
+  for (const [letter, value] of Object.entries(raw)) {
+    const neighbors = KEYBOARD_NEIGHBORS[letter] || [];
+    const neighborAvg = neighbors.length > 0
+      ? neighbors.reduce((sum, n) => sum + (raw[n] || 0), 0) / neighbors.length
+      : 0;
+    blended[letter] = SELF_WEIGHT * value + (1 - SELF_WEIGHT) * neighborAvg;
+  }
+
+  // Re-normalize blended values
+  const blendMax = Math.max(...Object.values(blended));
+  if (blendMax === 0) return null;
+  const heatmap = {};
+  for (const [letter, val] of Object.entries(blended)) {
+    heatmap[letter] = val / blendMax;
   }
   return heatmap;
 };
