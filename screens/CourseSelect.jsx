@@ -32,14 +32,14 @@ export default function CourseSelect({ onBack, onStartCourse }) {
         <div style={{ width: "40px", height: "2px", background: "#c9a94e", margin: "0 auto 24px" }} />
 
         {/* Mode Toggle */}
-        <div style={{ display: "flex", justifyContent: "center", gap: "4px", marginBottom: mode === "themed" ? "16px" : "24px", background: "rgba(255,255,255,0.05)", borderRadius: "8px", padding: "4px" }}>
+        <div className="mode-scroll" style={{ display: "flex", justifyContent: "center", gap: "4px", marginBottom: mode === "themed" ? "16px" : "24px", background: "rgba(255,255,255,0.05)", borderRadius: "8px", padding: "4px", overflowX: "auto", WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}>
           {MODES.map((m) => (
             <button
               key={m.key}
               onClick={() => setMode(m.key)}
               style={{
-                flex: 1,
-                padding: "10px 12px",
+                flex: "0 0 auto",
+                padding: "10px 16px",
                 borderRadius: "6px",
                 border: "none",
                 background: mode === m.key ? "linear-gradient(135deg, #4a7c59, #3a6a49)" : "transparent",
@@ -50,6 +50,7 @@ export default function CourseSelect({ onBack, onStartCourse }) {
                 letterSpacing: "1.5px",
                 cursor: "pointer",
                 transition: "all 0.2s ease",
+                whiteSpace: "nowrap",
               }}
             >
               {m.label}

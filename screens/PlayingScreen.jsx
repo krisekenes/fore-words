@@ -8,22 +8,22 @@ const heatmapColor = (value) => {
   if (value <= 0) return "rgba(255,255,255,0.08)";
   if (value <= 0.3) {
     const t = value / 0.3;
-    const r = Math.round(255 + (74 - 255) * t);
-    const g = Math.round(255 + (124 - 255) * t);
-    const b = Math.round(255 + (89 - 255) * t);
-    const a = 0.08 + (0.3 - 0.08) * t;
+    const r = Math.round(255 + (40 - 255) * t);
+    const g = Math.round(255 + (160 - 255) * t);
+    const b = Math.round(255 + (80 - 255) * t);
+    const a = 0.1 + (0.35 - 0.1) * t;
     return `rgba(${r},${g},${b},${a.toFixed(2)})`;
   }
   if (value <= 0.6) {
     const t = (value - 0.3) / 0.3;
-    const a = 0.3 + (0.6 - 0.3) * t;
-    return `rgba(74,124,89,${a.toFixed(2)})`;
+    const a = 0.35 + (0.65 - 0.35) * t;
+    return `rgba(40,160,80,${a.toFixed(2)})`;
   }
   const t = (value - 0.6) / 0.4;
-  const r = Math.round(74 + (201 - 74) * t);
-  const g = Math.round(124 + (169 - 124) * t);
-  const b = Math.round(89 + (78 - 89) * t);
-  const a = 0.6 + (0.7 - 0.6) * t;
+  const r = Math.round(40 + (220 - 40) * t);
+  const g = Math.round(160 + (180 - 160) * t);
+  const b = Math.round(80 + (50 - 80) * t);
+  const a = 0.65 + (0.9 - 0.65) * t;
   return `rgba(${r},${g},${b},${a.toFixed(2)})`;
 };
 
@@ -293,7 +293,7 @@ export default function PlayingScreen({
           <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "14px", color: "#8BA89A", marginBottom: "20px" }}>
             {gameState === "won" ? `${guesses.length} ${guesses.length === 1 ? "stroke" : "strokes"}` : `The word was ${answer}`}
           </div>
-          <button onClick={onAdvanceHole} style={{ ...styles.primaryBtn, padding: "10px 32px", fontSize: "13px" }}>
+          <button onClick={onAdvanceHole} style={{ ...styles.primaryBtn, padding: "10px 32px", fontSize: "13px", whiteSpace: "nowrap" }}>
             {currentHole < holes.length - 1 ? "NEXT HOLE →" : "VIEW SCORECARD"}
           </button>
         </div>
