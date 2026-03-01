@@ -6,12 +6,11 @@ import { globalStyles } from "../styles.js";
 
 const heatmapColor = (value) => {
   if (value <= 0) return "hsla(0,0%,100%,0.08)";
-  // Interpolate: green (h140,s60%,l40%) → gold (h47,s75%,l53%)
-  const h = Math.round(140 + (47 - 140) * value);
-  const s = Math.round(60 + (75 - 60) * value);
-  const l = Math.round(40 + (53 - 40) * value);
-  const a = 0.1 + (0.9 - 0.1) * value;
-  return `hsla(${h},${s}%,${l}%,${a.toFixed(2)})`;
+  // Single-hue green: dim forest → vivid green
+  const s = Math.round(50 + (70 - 50) * value);
+  const l = Math.round(25 + (55 - 25) * value);
+  const a = 0.12 + (0.85 - 0.12) * value;
+  return `hsla(145,${s}%,${l}%,${a.toFixed(2)})`;
 };
 
 export default function PlayingScreen({
