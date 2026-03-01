@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { COURSES, generateHoles, getThemedCourse } from "./data/courses.js";
 import { checkWord, pickWord, evaluateGuess, getScoreName, HANDICAP_BONUS, computeHeatmap } from "./gameLogic.js";
-import { loadProfile, saveHandicap, saveRound, saveBadges, markWelcomeSeen, saveGameState, loadGameState, clearGameState } from "./storage.js";
+import { loadProfile, saveHandicap, saveRound, saveBadges, markWelcomeSeen, saveGameState, loadGameState, clearGameState, saveLastScreen, loadLastScreen } from "./storage.js";
 import { BADGES } from "./data/badges.js";
 import MenuScreen from "./screens/MenuScreen.jsx";
 import CourseSelect from "./screens/CourseSelect.jsx";
@@ -264,6 +264,11 @@ export default function ForeWords() {
     setScreen("playing");
   };
 
+  // Persist screen so reload can return to the right place
+  useEffect(() => {
+    saveLastScreen(screen);
+  }, [screen]);
+
   // Autosave game state whenever gameplay progresses
   useEffect(() => {
     if (screen !== "playing" || !selectedCourse) return;
@@ -273,13 +278,14 @@ export default function ForeWords() {
     });
   }, [screen, selectedCourse, guesses, scores, currentHole, gameState]);
 
-  // Auto-resume on initial load if there's a saved game
+  // Auto-resume only if the user was actively playing when they left
   const [hasAutoResumed, setHasAutoResumed] = useState(false);
   useEffect(() => {
     if (hasAutoResumed) return;
     setHasAutoResumed(true);
+    const lastScreen = loadLastScreen();
     const saved = loadGameState();
-    if (saved && profile.hasSeenWelcome) {
+    if (saved && profile.hasSeenWelcome && lastScreen === "playing") {
       resumeRound(saved);
     }
   }, []);

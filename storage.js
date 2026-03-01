@@ -109,6 +109,24 @@ export function clearGameState() {
   }
 }
 
+const LAST_SCREEN_KEY = "forewords_lastscreen";
+
+export function saveLastScreen(screen) {
+  try {
+    localStorage.setItem(LAST_SCREEN_KEY, screen);
+  } catch {
+    // silently fail
+  }
+}
+
+export function loadLastScreen() {
+  try {
+    return localStorage.getItem(LAST_SCREEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
 export function getStats(profile) {
   const { rounds } = profile;
   if (rounds.length === 0) {
