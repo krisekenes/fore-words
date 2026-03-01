@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { RARITY_COLORS, RARITY_GLOW } from "../data/badges.js";
+import { BadgeIcon } from "./BadgeIcons.jsx";
 
 const CONFETTI_COLORS = ["#c9a94e", "#4a7c59", "#E8E0D0", "#8BA89A", "#d4956a", "#e8b4f8", "#FFD700", "#4CAF50"];
 
@@ -92,12 +93,12 @@ export default function BadgeCelebration({ badges, onAllClaimed }) {
         </div>
 
         <div style={{
-          fontSize: "72px",
-          lineHeight: 1,
           marginBottom: "16px",
+          display: "flex",
+          justifyContent: "center",
           animation: "popIn 0.4s 0.2s both",
         }}>
-          {badge.icon}
+          <BadgeIcon id={badge.id} color={rarityColor} size={72} />
         </div>
 
         <div style={isPlatinum ? {
