@@ -202,55 +202,62 @@ export default function ForeWords() {
   };
 
   const quitRound = () => {
-    saveGameState({
-      selectedCourse,
-      selectedTheme,
-      gameMode,
-      holeCount,
-      holes,
-      scores,
-      currentHole,
-      answer,
-      guesses,
-      maxGuesses,
-      letterStates,
-    });
+    // Game state is already autosaved — just navigate away
     setScreen("menu");
     setSelectedCourse(null);
   };
 
-  const resumeRound = () => {
-    const saved = loadGameState();
-    if (!saved) return;
+  const resumeRound = (saved) => {
+    const state = saved || loadGameState();
+    if (!state) return;
 
-    setSelectedCourse(saved.selectedCourse);
-    setSelectedTheme(saved.selectedTheme);
-    setGameMode(saved.gameMode || "standard");
-    setHoleCount(saved.holeCount);
-    setHoles(saved.holes);
-    setScores(saved.scores);
-    setCurrentHole(saved.currentHole);
-    setAnswer(saved.answer);
-    setGuesses(saved.guesses);
+    setSelectedCourse(state.selectedCourse);
+    setSelectedTheme(state.selectedTheme);
+    setGameMode(state.gameMode || "standard");
+    setHoleCount(state.holeCount);
+    setHoles(state.holes);
+    setScores(state.scores);
+    setCurrentHole(state.currentHole);
+    setAnswer(state.answer);
+    setGuesses(state.guesses);
     setCurrentGuess("");
-    setMaxGuesses(saved.maxGuesses);
+    setMaxGuesses(state.maxGuesses);
     setGameState("playing");
     setRevealRow(-1);
     setHoleMessage(null);
-    setLetterStates(saved.letterStates || {});
+    setLetterStates(state.letterStates || {});
 
     // Mark all previous guesses as revealed
     const revealed = new Set();
-    for (let i = 0; i < saved.guesses.length; i++) {
-      for (let j = 0; j < saved.guesses[i].word.length; j++) {
+    for (let i = 0; i < state.guesses.length; i++) {
+      for (let j = 0; j < state.guesses[i].word.length; j++) {
         revealed.add(`${i}-${j}`);
       }
     }
     setRevealedTiles(revealed);
 
-    clearGameState();
     setScreen("playing");
   };
+
+  // Autosave game state whenever gameplay progresses
+  useEffect(() => {
+    if (screen !== "playing" || !selectedCourse) return;
+    saveGameState({
+      selectedCourse, selectedTheme, gameMode, holeCount,
+      holes, scores, currentHole, answer, guesses, maxGuesses, letterStates,
+    });
+  }, [screen, selectedCourse, guesses, scores, currentHole]);
+
+  // Auto-resume on initial load if there's a saved game
+  const [hasAutoResumed, setHasAutoResumed] = useState(false);
+  useEffect(() => {
+    if (hasAutoResumed) return;
+    setHasAutoResumed(true);
+    const saved = loadGameState();
+    if (saved && profile.hasSeenWelcome) {
+      resumeRound(saved);
+    }
+  }, []);
 
   if (screen === "welcome") {
     return (
