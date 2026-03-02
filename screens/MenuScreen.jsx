@@ -43,7 +43,7 @@ export default function MenuScreen({ onSelectCourse, onProfile, onScoring, saved
 
         {/* Daily Challenge card */}
         <div
-          onClick={onDaily}
+          onClick={dailyPlayed ? undefined : onDaily}
           style={{
             background: dailyPlayed
               ? "rgba(201,169,78,0.06)"
@@ -52,7 +52,7 @@ export default function MenuScreen({ onSelectCourse, onProfile, onScoring, saved
             borderRadius: "12px",
             padding: "16px 18px",
             marginBottom: "14px",
-            cursor: "pointer",
+            cursor: dailyPlayed ? "default" : "pointer",
             display: "flex",
             alignItems: "center",
             gap: "14px",
@@ -82,7 +82,7 @@ export default function MenuScreen({ onSelectCourse, onProfile, onScoring, saved
                 {dailyDiffStr}
               </div>
               <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "9px", letterSpacing: "1.5px", color: "#6a7a6e", marginTop: "1px" }}>
-                PLAY AGAIN
+                TODAY
               </div>
             </div>
           ) : (
