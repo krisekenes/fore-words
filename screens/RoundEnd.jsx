@@ -135,9 +135,11 @@ export default function RoundEnd({ holes, scores, selectedCourse, displayCourseN
           <button onClick={onClubhouse} style={{ ...styles.primaryBtn, flex: 1, background: "rgba(255,255,255,0.08)" }}>
             CLUBHOUSE
           </button>
-          <button onClick={onPlayAgain} style={{ ...styles.primaryBtn, flex: 1 }}>
-            PLAY AGAIN
-          </button>
+          {!isDaily && (
+            <button onClick={onPlayAgain} style={{ ...styles.primaryBtn, flex: 1 }}>
+              PLAY AGAIN
+            </button>
+          )}
         </div>
       </div>
 
