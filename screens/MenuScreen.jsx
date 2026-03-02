@@ -19,11 +19,11 @@ export default function MenuScreen({ onSelectCourse, onProfile, onScoring, saved
         <div style={{ textAlign: "center", marginBottom: "32px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", marginBottom: "8px" }}>
             <svg width="28" height="28" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-              <rect x="14" y="2" width="2.5" height="22" rx="1" fill="#8BA89A"/>
-              <polygon points="16.5,2 16.5,13 5,7.5" fill="#4a7c59"/>
-              <text x="6.5" y="12" fontFamily="serif" fontWeight="700" fontSize="9" fill="#c9a94e">W</text>
-              <circle cx="15" cy="27" r="2.5" fill="none" stroke="#4a7c59" strokeWidth="1.2"/>
-              <circle cx="15" cy="27" r="1" fill="#8BA89A"/>
+              <rect x="14" y="3" width="2" height="22" rx="1" fill="#8BA89A"/>
+              <polygon points="16,3 16,14 5,8.5" fill="#4a7c59"/>
+              <text x="8" y="12" fontFamily="serif" fontWeight="700" fontSize="8" fill="#c9a94e">W</text>
+              <circle cx="15" cy="27" r="2.5" fill="none" stroke="#3a5a3a" strokeWidth="1"/>
+              <circle cx="15" cy="27" r="1" fill="#E8E0D0"/>
             </svg>
             <span style={{ fontSize: "14px", letterSpacing: "6px", color: "#8BA89A", fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>
               EST. 2025
