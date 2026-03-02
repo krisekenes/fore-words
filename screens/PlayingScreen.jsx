@@ -184,7 +184,7 @@ export default function PlayingScreen({
       <style>{globalStyles}</style>
 
       {/* Header */}
-      <div style={{ padding: "12px 16px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <div style={{ padding: "8px 16px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <button
             onClick={() => setShowQuitConfirm(true)}
@@ -212,7 +212,7 @@ export default function PlayingScreen({
       </div>
 
       {/* Hole Info Bar */}
-      <div style={{ display: "flex", justifyContent: "center", gap: "24px", padding: "10px 16px", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+      <div style={{ display: "flex", justifyContent: "center", gap: "24px", padding: "6px 16px", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
         <div style={{ textAlign: "center" }}>
           <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "10px", letterSpacing: "2px", color: "#6a7a6e" }}>PAR</div>
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "20px", color: "#E8E0D0", fontWeight: 700 }}>{hole.par}</div>
@@ -230,7 +230,7 @@ export default function PlayingScreen({
       </div>
 
       {/* Grid */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "4px", padding: "12px 16px", minHeight: 0, overflow: "auto" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "4px", padding: "8px 16px", minHeight: 0, overflow: "auto" }}>
         {renderGrid()}
       </div>
 
@@ -286,7 +286,7 @@ export default function PlayingScreen({
       )}
 
       {/* Keyboard */}
-      <div style={{ padding: "8px 0 12px", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+      <div style={{ padding: "6px 0 8px", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
         {renderKeyboard()}
       </div>
 
@@ -295,7 +295,7 @@ export default function PlayingScreen({
         const dotSize = holes.length > 9 ? 22 : 28;
         const dotFont = holes.length > 9 ? "9px" : "11px";
         return (
-          <div style={{ display: "flex", justifyContent: "center", gap: "2px", padding: "0 8px 16px", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", justifyContent: "center", gap: "2px", padding: "0 8px 10px", flexWrap: "wrap" }}>
             {holes.map((h, i) => {
               const s = scores[i];
               const isCurrent = i === currentHole;
