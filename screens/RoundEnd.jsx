@@ -50,8 +50,9 @@ export default function RoundEnd({ holes, scores, selectedCourse, displayCourseN
       <style>{globalStyles}</style>
       <div style={{ ...styles.menuContent, padding: "24px 16px" }}>
         {isDaily && (
-          <div style={{ textAlign: "center", fontFamily: "'DM Sans', sans-serif", fontSize: "10px", letterSpacing: "3px", color: "#c9a94e", fontWeight: 600, marginBottom: "6px" }}>
-            DAILY CHALLENGE · {getDailyDisplayDate()}
+          <div style={{ textAlign: "center", fontFamily: "'DM Sans', sans-serif", color: "#c9a94e", fontWeight: 600, marginBottom: "6px" }}>
+            <div style={{ fontSize: "9px", letterSpacing: "3px" }}>DAILY CHALLENGE</div>
+            <div style={{ fontSize: "11px", letterSpacing: "1px" }}>{getDailyDisplayDate()}</div>
           </div>
         )}
         <h2 style={{ fontFamily: "'Playfair Display', serif", color: "#E8E0D0", fontSize: "28px", textAlign: "center", margin: "0 0 4px 0" }}>
